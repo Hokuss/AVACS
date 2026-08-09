@@ -1,0 +1,12 @@
+# ninja log v7
+25	1564	8045342764242611	CMakeFiles/sandbox.dir/src/main.cpp.obj	3f27f29b49e1f711
+1262	1444	8075131756247068	sandbox.exe	138235ace06873f0
+17	158	8075145454654973	build.ninja	de1381c93a7df027
+17	158	8075145454624993	C:/Projects/gcc/AVACS/build/cmake_install.cmake	de1381c93a7df027
+58	4225	8075119794511046	CMakeFiles/sandbox.dir/src/watcher.cpp.obj	a2d421af9946aad6
+75	1013	8061427303294744	CMakeFiles/sandbox.dir/src/parser.cpp.obj	d19f069c7b553d47
+26	769	8061456435698981	CMakeFiles/sandbox.dir/src/utils.cpp.obj	95a840b9216349c
+29	1261	8075131743928958	CMakeFiles/sandbox.dir/src/ast.cpp.obj	5ee08146084687fd
+26	1065	8075145455556725	CMakeFiles/sandbox.dir/src/ast.cpp.obj	5ee08146084687fd
+20	2120	8075145455506707	CMakeFiles/sandbox.dir/src/watcher.cpp.obj	a2d421af9946aad6
+2121	2294	8075145476510160	sandbox.exe	138235ace06873f0

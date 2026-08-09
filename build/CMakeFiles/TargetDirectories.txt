@@ -1,0 +1,3 @@
+C:/Projects/gcc/AVACS/build/CMakeFiles/sandbox.dir
+C:/Projects/gcc/AVACS/build/CMakeFiles/edit_cache.dir
+C:/Projects/gcc/AVACS/build/CMakeFiles/rebuild_cache.dir

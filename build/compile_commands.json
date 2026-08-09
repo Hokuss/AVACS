@@ -1,0 +1,32 @@
+[
+{
+  "directory": "C:/Projects/gcc/AVACS/build",
+  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -std=c++26 -o CMakeFiles\\sandbox.dir\\src\\main.cpp.obj -c C:\\Projects\\gcc\\AVACS\\src\\main.cpp",
+  "file": "C:/Projects/gcc/AVACS/src/main.cpp",
+  "output": "C:/Projects/gcc/AVACS/build/CMakeFiles/sandbox.dir/src/main.cpp.obj"
+},
+{
+  "directory": "C:/Projects/gcc/AVACS/build",
+  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -std=c++26 -o CMakeFiles\\sandbox.dir\\src\\watcher.cpp.obj -c C:\\Projects\\gcc\\AVACS\\src\\watcher.cpp",
+  "file": "C:/Projects/gcc/AVACS/src/watcher.cpp",
+  "output": "C:/Projects/gcc/AVACS/build/CMakeFiles/sandbox.dir/src/watcher.cpp.obj"
+},
+{
+  "directory": "C:/Projects/gcc/AVACS/build",
+  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -std=c++26 -o CMakeFiles\\sandbox.dir\\src\\utils.cpp.obj -c C:\\Projects\\gcc\\AVACS\\src\\utils.cpp",
+  "file": "C:/Projects/gcc/AVACS/src/utils.cpp",
+  "output": "C:/Projects/gcc/AVACS/build/CMakeFiles/sandbox.dir/src/utils.cpp.obj"
+},
+{
+  "directory": "C:/Projects/gcc/AVACS/build",
+  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -std=c++26 -o CMakeFiles\\sandbox.dir\\src\\parser.cpp.obj -c C:\\Projects\\gcc\\AVACS\\src\\parser.cpp",
+  "file": "C:/Projects/gcc/AVACS/src/parser.cpp",
+  "output": "C:/Projects/gcc/AVACS/build/CMakeFiles/sandbox.dir/src/parser.cpp.obj"
+},
+{
+  "directory": "C:/Projects/gcc/AVACS/build",
+  "command": "C:\\msys64\\mingw64\\bin\\c++.exe -std=c++26 -o CMakeFiles\\sandbox.dir\\src\\ast.cpp.obj -c C:\\Projects\\gcc\\AVACS\\src\\ast.cpp",
+  "file": "C:/Projects/gcc/AVACS/src/ast.cpp",
+  "output": "C:/Projects/gcc/AVACS/build/CMakeFiles/sandbox.dir/src/ast.cpp.obj"
+}
+]
