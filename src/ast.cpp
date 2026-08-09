@@ -39,12 +39,18 @@ inline const char* grammar_name(grammar g) {
         case grammar::WEB:               return "WEB";
         case grammar::DATA:              return "DATA";
         case grammar::LOGIC:             return "LOGIC";
+        case grammar::LOAD:              return "LOAD";
+        case grammar::ASSERT:            return "ASSERT";
+        case grammar::UPDATE:            return "UPDATE";
         case grammar::INCLUDE:           return "INCLUDE";
         case grammar::WEBSITE_BLOCK:     return "WEBSITE_BLOCK";
         case grammar::DATA_BLOCK:        return "DATA_BLOCK";
         case grammar::LOGIC_BLOCK:       return "LOGIC_BLOCK";
         case grammar::ASSIGNMENT:        return "ASSIGNMENT";
         case grammar::INCLUDE_BLOCK:     return "INCLUDE_BLOCK";
+        case grammar::LOAD_BLOCK:        return "LOAD_BLOCK";
+        case grammar::UPDATE_BLOCK:      return "UPDATE_BLOCK";
+        case grammar::ASSERT_BLOCK:      return "ASSERT_BLOCK";
         default:                         return "UNKNOWN";
     }
 }
@@ -103,6 +109,7 @@ token next_token(){
         if (literal == "load") return {grammar::LOAD, literal.size(), literal};
         if (literal == "update") return {grammar::UPDATE, literal.size(), literal};
         if (literal == "assert") return {grammar::ASSERT, literal.size(), literal};
+        if (literal == "include") return {grammar::INCLUDE, literal.size(), literal};
 
             
         return {grammar::IDENTIFIER, literal.size(), literal};
@@ -291,7 +298,10 @@ std::shared_ptr<green_node> ast::load_block(){
 
     add_child(next_leaf());
 
+    add_child(trivia_block());
+
     expect_and_add(grammar::OPEN_BRACE);
+    add_child(trivia_block());
     expect_and_add(grammar::CLOSE_BRACE);
 
     return load;
@@ -324,8 +334,10 @@ std::shared_ptr<green_node> ast::update_block(){
     };
 
     add_child(next_leaf());
+    add_child(trivia_block());
 
     expect_and_add(grammar::OPEN_BRACE);
+    add_child(trivia_block());
     expect_and_add(grammar::CLOSE_BRACE);
 
     return updates;
@@ -395,6 +407,42 @@ std::shared_ptr<green_node> ast::data_block(){
     return data;
 }
 
+std::shared_ptr<green_node> ast::include_block(){
+    std::shared_ptr<green_node> include = std::make_shared<green_node> ();
+    include->syntax = grammar::INCLUDE_BLOCK;
+    include->size = 0;
+
+    auto add_child = [&](std::shared_ptr<green_node> child_node) {
+        if (child_node) {
+            include->child.push_back(child_node);
+            include->size += child_node->size;
+        }
+    };
+
+    auto expect_and_add = [&](grammar expected, const std::string& err_msg = "") -> bool {
+        if (peek().type != expected) {
+            if (!err_msg.empty()) {
+                std::cerr << err_msg << std::endl;
+            } else {
+                std::cerr << "Expected - " << grammar_name(expected)
+                          << " Found - " << grammar_name(peek().type) << std::endl;
+            }
+            return false;
+        }
+        add_child(next_leaf());
+        return true;
+    };
+
+    add_child(next_leaf());
+    add_child(trivia_block());
+
+    expect_and_add(grammar::OPEN_BRACE);
+    expect_and_add(grammar::STRING);
+    expect_and_add(grammar::CLOSE_BRACE);
+
+    return include;
+}
+
 void ast::parser() {
     std::string content = read_file(source_file);
     source = content;
@@ -426,9 +474,9 @@ void ast::parser() {
             //     root_green->child.push_back(logic_block());
             //     break;
 
-            // case grammar::INCLUDE:
-            //     root_green->child.push_back(include_block());
-            //     break;
+            case grammar::INCLUDE:
+                root_green->child.push_back(include_block());
+                break;
 
             default: {
                 std::shared_ptr<green_node> error_leaf = next_leaf();

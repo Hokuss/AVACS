@@ -1,4 +1,13 @@
+include {"apple"}
+
 website \home\ok {
     source = "Apple";
     red = "tree";
+}
+
+data \tree {
+    connection = "tree";
+    load {
+
+    }
 }

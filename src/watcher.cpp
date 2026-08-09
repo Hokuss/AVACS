@@ -34,7 +34,7 @@ void loop(std::stop_token stop, std::string main){
     while (!stop.stop_requested()){
         if(!fs::exists(main_loc)){
             std::cerr<<"Main File Not Located. Old Compilation Hope"<<std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             continue;
         }
         fs::file_time_type current_updated = fs::last_write_time(main_loc);
