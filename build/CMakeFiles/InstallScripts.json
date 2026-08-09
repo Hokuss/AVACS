@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"C:/Projects/gcc/AVACS/build/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
