@@ -16,7 +16,6 @@ add_executable(sandbox
     src/main.cpp
     src/watcher.cpp
     src/utils.cpp
-    src/parser.cpp
     src/ast.cpp
 )
 

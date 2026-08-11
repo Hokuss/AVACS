@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -22,6 +23,7 @@ enum class grammar {
 struct green_node {
     grammar syntax;
     uint64_t size = 0;
+    std::string_view look;
     std::vector<std::shared_ptr<green_node>> child;
 };
 
@@ -31,8 +33,18 @@ struct red_node {
     uint64_t start = 0;
 };
 
+struct token {
+    grammar type;
+    uint64_t size;
+    std::string_view look;
+};
+
 class ast{
     private:
+        std::string raw_source;
+        std::string_view source;
+        token next_token();
+        token peek();
         void parser();
         std::shared_ptr<green_node> load_block();
         std::shared_ptr<green_node> update_block();
@@ -47,6 +59,7 @@ class ast{
 
     public:
         std::string source_file;
+        
         std::shared_ptr<green_node> root_green;
 
 
@@ -73,6 +86,8 @@ class ast{
 };
 
 class compiler_context {
+    private:
+        void lexer_check();
 
     public: 
         std::unordered_map<std::string, std::unique_ptr<ast>> files;
@@ -82,6 +97,7 @@ class compiler_context {
             }
 
             files[path]->update();
+            lexer_check();
         }
         
 };

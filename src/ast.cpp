@@ -2,19 +2,13 @@
 #include "utils.hpp"
 #include <cctype>
 #include <cstddef>
-#include <cstdint>
 #include <iostream>
 #include <memory>
 #include <string_view>
 
-std::string_view source;
 size_t cursor = 0;
 
-struct token {
-    grammar type;
-    uint64_t size;
-    std::string_view look;
-};
+
 
 inline const char* grammar_name(grammar g) {
     switch (g) {
@@ -55,7 +49,7 @@ inline const char* grammar_name(grammar g) {
     }
 }
 
-token next_token(){
+token ast::next_token(){
     if(cursor >= source.size()) return {grammar::EF, 0 , ""};
     size_t start = cursor;
     char current = source[cursor];
@@ -120,7 +114,7 @@ token next_token(){
 
 }
 
-token peek(){
+token ast::peek(){
     size_t saved_cursor = cursor;
     token next = next_token();
     cursor = saved_cursor;
@@ -132,6 +126,7 @@ std::shared_ptr<green_node> ast::next_leaf(){
     std::shared_ptr<green_node> leaf = std::make_shared<green_node>();
     leaf->size = temp.size;
     leaf->syntax = temp.type;
+    leaf->look = temp.look;
     return leaf;
 }
 
@@ -444,8 +439,8 @@ std::shared_ptr<green_node> ast::include_block(){
 }
 
 void ast::parser() {
-    std::string content = read_file(source_file);
-    source = content;
+    raw_source = read_file(source_file);
+    source = raw_source;
     cursor = 0;
 
     root_green = std::make_shared<green_node>();
@@ -511,7 +506,7 @@ void ast_print_impl(const std::shared_ptr<green_node>& node,
         std::cout << (is_last ? "`-- " : "|-- ");
     }
     std::cout << to_lower(grammar_name(node->syntax))
-               << " (" << node->size << ")\n";
+               << " (" << node->look << ")\n";
 
     std::string child_prefix = prefix;
     if (!is_root) {
@@ -530,4 +525,8 @@ void ast_print(std::shared_ptr<green_node> root) {
 void ast::update() {
     parser();
     ast_print(root_green);
+}
+
+void compiler_context::lexer_check(){
+
 }
