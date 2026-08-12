@@ -5,6 +5,7 @@
 #include <iostream>
 #include <memory>
 #include <string_view>
+#include <vector>
 
 size_t cursor = 0;
 
@@ -193,6 +194,8 @@ std::shared_ptr<green_node> ast::assignment_block() {
 
     // 4. Expect EOS (end of statement/line)
     if (!expect_and_add(grammar::EOS, "No end of line Character")) return assign;
+
+    assign->look = assign->child[0]->look;
 
     return assign;
 }
@@ -528,5 +531,35 @@ void ast::update() {
 }
 
 void compiler_context::lexer_check(){
+    for(const auto& [file_name, ptr]: files){
+        observer_ptr<ast> temp = ptr.get();
+        for(std::weak_ptr<green_node> a: temp->root_green->child){
+            bool rule = false;
+            for (assertions check: rules){
+                if (check.parent == a.lock()->syntax) {
+                    rule = true;
+                    std::shared_ptr<green_node> temp = a.lock();
+                    std::vector<bool> satisfied (check.child.size(), false);
+                    for (int i = 0; i<check.child.size();i++){
+                        for(const auto & tree: temp->child){
+                            if (tree->syntax == check.child[i].type && (tree->look == check.child[i].value || check.child[i].value =="") && !satisfied[i]) {
+                                satisfied[i] = true;
+                            } else if (tree->syntax == check.child[i].type && (tree->look == check.child[i].value || check.child[i].value =="")) {
+                                satisfied[i] = false;
+                                break;
+                            }
+                        }
+                    }
 
+                    for(int i = 0; i<satisfied.size();i++){
+                        if (!satisfied[i]) {
+                            std::cerr<<"Rule not satified -"<<grammar_name(temp->syntax)<<"Following required - "<<grammar_name(check.child[i].type) << "and" << check.child[i].value<<std::endl;
+                        }
+                    }
+                }
+                if(rule) break; 
+            }
+        }
+
+    }
 }

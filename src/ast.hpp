@@ -1,7 +1,9 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -103,3 +105,30 @@ class compiler_context {
 };
 
 extern compiler_context wx_compiler;
+
+/*
+similar rules for finding the alphanum like web/data/include blocks as well
+*/
+
+struct child_rule {
+    grammar type;
+    std::string_view value;
+};
+
+struct assertions{
+    grammar parent;
+    std::span<const child_rule> child;
+};
+
+constexpr std::array<child_rule, 1> rinc = {{
+    {grammar::STRING, ""}
+}};
+
+constexpr std::array<child_rule, 1> rweb = {{
+    {grammar::ASSIGNMENT, "source"}
+}};
+
+constexpr std::array<assertions, 2> rules = {{
+    {grammar::INCLUDE_BLOCK, rinc},
+    {grammar::WEBSITE_BLOCK, rweb}
+}};
