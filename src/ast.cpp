@@ -568,7 +568,6 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
     int i = val_start;
     for (auto it: green->child){
         child.push_back(std::make_unique<red_node>(it,this, i));
-        i += it->size;
 
         if (it->syntax==grammar::WEBSITE_BLOCK || it->syntax==grammar::DATA_BLOCK) {
             int j = i;
@@ -583,6 +582,7 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                 j+=con->size;
             }
         }
+        i += it->size;
         // Add Assignment
     }
 }
