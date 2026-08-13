@@ -527,7 +527,7 @@ void ast_print(std::shared_ptr<green_node> root) {
 }
 void ast::update() {
     parser();
-    ast_print(root_green);
+    // ast_print(root_green);
 }
 
 void compiler_context::lexer_check(){
@@ -561,5 +561,28 @@ void compiler_context::lexer_check(){
             }
         }
 
+    }
+}
+
+red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int val_start) : green(g), parent(p), start(val_start) {
+    int i = val_start;
+    for (auto it: green->child){
+        child.push_back(std::make_unique<red_node>(it,this, i));
+        i += it->size;
+
+        if (it->syntax==grammar::WEBSITE_BLOCK || it->syntax==grammar::DATA_BLOCK) {
+            int j = i;
+            for (auto con: it->child) {
+                if (con->syntax==grammar::PATH) {
+                    symbol temp;
+                    temp.syntax = con->syntax;
+                    temp.name = con->look;
+                    temp.offset = j;
+                    break;
+                }
+                j+=con->size;
+            }
+        }
+        // Add Assignment
     }
 }

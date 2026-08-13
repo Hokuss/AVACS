@@ -1,6 +1,8 @@
 #pragma once
 
+#include "utils.hpp"
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <span>
@@ -22,6 +24,12 @@ enum class grammar {
     WEBSITE_BLOCK, DATA_BLOCK, LOGIC_BLOCK, ASSIGNMENT, INCLUDE_BLOCK, LOAD_BLOCK, UPDATE_BLOCK, ASSERT_BLOCK
 };
 
+struct symbol{
+    grammar syntax;
+    std::string name;
+    uint64_t offset;
+};
+
 struct green_node {
     grammar syntax;
     uint64_t size = 0;
@@ -31,8 +39,22 @@ struct green_node {
 
 struct red_node {
     std::shared_ptr<green_node> green;
-    std::weak_ptr<red_node> parent;
+    std::vector<std::unique_ptr<red_node>> child;
+    observer_ptr<red_node> parent;
     uint64_t start = 0;
+
+    std::unordered_map<std::string_view, symbol> symbols;
+
+    red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p = nullptr, int val_start = 0);
+
+    observer_ptr<symbol> resolve(std::string_view sym) {
+        if(symbols.find(sym)!=symbols.end()){
+            return &symbols[sym];
+        } else if (parent!=nullptr) {
+            return parent->resolve(sym);
+        } 
+        return nullptr;
+    };
 };
 
 struct token {
@@ -63,6 +85,7 @@ class ast{
         std::string source_file;
         
         std::shared_ptr<green_node> root_green;
+        std::shared_ptr<red_node> root_red;
 
 
         ast(std::string a){
