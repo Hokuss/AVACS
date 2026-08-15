@@ -582,7 +582,6 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     break;
                 }
 
-                
                 j+=con->size;
             }
         }
