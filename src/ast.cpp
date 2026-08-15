@@ -566,6 +566,7 @@ void compiler_context::lexer_check(){
 
 red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int val_start) : green(g), parent(p), start(val_start) {
     int i = val_start;
+    int slot = 0;
     for (auto it: green->child){
         child.push_back(std::make_unique<red_node>(it,this, i));
 
@@ -577,6 +578,7 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.syntax = con->syntax;
                     temp.name = con->look;
                     temp.offset = j;
+                    temp.vm_slot = slot++;
                     break;
                 }
                 j+=con->size;

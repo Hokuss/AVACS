@@ -27,7 +27,8 @@ enum class grammar {
 struct symbol{
     grammar syntax;
     std::string name;
-    uint64_t offset;
+    uint64_t offset = 0;
+    uint64_t vm_slot = 0;
 };
 
 struct green_node {
