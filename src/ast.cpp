@@ -579,6 +579,7 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.name = con->look;
                     temp.offset = j;
                     temp.vm_slot = slot++;
+                    symbols[temp.name] = temp; 
                     break;
                 }
                 j+=con->size;
@@ -593,6 +594,7 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.name = con->look;
                     temp.offset = j;
                     temp.vm_slot = slot++;
+                    symbols[temp.name] = temp;
                     break;
                 }
                 j += con->size;
@@ -607,6 +609,7 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.name = con->look;
                     temp.offset = j;
                     temp.vm_slot = slot++;
+                    symbols[temp.name] = temp;
                 }
                 j += con->size;
             }
