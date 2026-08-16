@@ -564,11 +564,10 @@ void compiler_context::lexer_check(){
     }
 }
 
-red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int val_start, int vm_slot) : green(g), parent(p), start(val_start) {
+red_node::red_node(std::shared_ptr<green_node> g,int &vm_slot, observer_ptr<red_node> p, int val_start) : green(g), parent(p), start(val_start) {
     int i = val_start;
-    int slot = vm_slot;
     for (auto it: green->child){
-        child.push_back(std::make_unique<red_node>(it,this, i));
+        child.push_back(std::make_unique<red_node>(it, vm_slot,this, i));
 
         if (it->syntax==grammar::WEBSITE_BLOCK || it->syntax==grammar::DATA_BLOCK || it->syntax==grammar::LOGIC_BLOCK) {
             int j = i;
@@ -578,7 +577,7 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.syntax = con->syntax;
                     temp.name = con->look;
                     temp.offset = j;
-                    temp.vm_slot = slot++;
+                    temp.vm_slot = vm_slot++;
                     symbols[temp.name] = temp; 
                     break;
                 }
@@ -593,7 +592,7 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.syntax = con->syntax;
                     temp.name = con->look;
                     temp.offset = j;
-                    temp.vm_slot = slot++;
+                    temp.vm_slot = vm_slot++;
                     symbols[temp.name] = temp;
                     break;
                 }
@@ -608,13 +607,16 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.syntax = con->syntax;
                     temp.name = con->look;
                     temp.offset = j;
-                    temp.vm_slot = slot++;
+                    temp.vm_slot = vm_slot++;
                     symbols[temp.name] = temp;
                 }
                 j += con->size;
             }
         }
         i += it->size;
-        // Add Assignment
     }
+}
+
+void ast::red_build(){
+    root_red = std::make_unique<red_node>(root_green, vm_slot);
 }

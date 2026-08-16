@@ -46,7 +46,7 @@ struct red_node {
 
     std::unordered_map<std::string_view, symbol> symbols;
 
-    red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p = nullptr, int val_start = 0, int vm_slot = 0);
+    red_node(std::shared_ptr<green_node> g,int &vm_slot, observer_ptr<red_node> p = nullptr, int val_start = 0);
 
     observer_ptr<symbol> resolve(std::string_view sym) {
         if(symbols.find(sym)!=symbols.end()){
@@ -81,6 +81,7 @@ class ast{
         std::shared_ptr<green_node> assignment_block();
         std::shared_ptr<green_node> include_block();
         std::shared_ptr<green_node> trivia_block();
+        int vm_slot = 0;
 
     public:
         std::string source_file;
@@ -95,8 +96,7 @@ class ast{
         };
 
         void update();
-
-
+        void red_build();
         
 
         // std::shared_ptr<red_node> get_red_tree() {
@@ -124,6 +124,8 @@ class compiler_context {
 
             files[path]->update();
             lexer_check();
+            files[path]->red_build();
+            
         }
         
 };
