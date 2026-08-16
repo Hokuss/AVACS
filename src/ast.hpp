@@ -46,7 +46,7 @@ struct red_node {
 
     std::unordered_map<std::string_view, symbol> symbols;
 
-    red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p = nullptr, int val_start = 0);
+    red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p = nullptr, int val_start = 0, int vm_slot = 0);
 
     observer_ptr<symbol> resolve(std::string_view sym) {
         if(symbols.find(sym)!=symbols.end()){

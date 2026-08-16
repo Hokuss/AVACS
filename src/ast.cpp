@@ -564,13 +564,13 @@ void compiler_context::lexer_check(){
     }
 }
 
-red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int val_start) : green(g), parent(p), start(val_start) {
+red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int val_start, int vm_slot) : green(g), parent(p), start(val_start) {
     int i = val_start;
-    int slot = 0;
+    int slot = vm_slot;
     for (auto it: green->child){
         child.push_back(std::make_unique<red_node>(it,this, i));
 
-        if (it->syntax==grammar::WEBSITE_BLOCK || it->syntax==grammar::DATA_BLOCK) {
+        if (it->syntax==grammar::WEBSITE_BLOCK || it->syntax==grammar::DATA_BLOCK || it->syntax==grammar::LOGIC_BLOCK) {
             int j = i;
             for (auto con: it->child) {
                 if (con->syntax==grammar::PATH) {
@@ -581,8 +581,34 @@ red_node::red_node(std::shared_ptr<green_node> g, observer_ptr<red_node> p, int 
                     temp.vm_slot = slot++;
                     break;
                 }
-
                 j+=con->size;
+            }
+        }
+        else if(it->syntax==grammar::ASSIGNMENT) {
+            int j = i;
+            for (auto con: it->child){
+                if(con->syntax==grammar::IDENTIFIER) {
+                    symbol temp;
+                    temp.syntax = con->syntax;
+                    temp.name = con->look;
+                    temp.offset = j;
+                    temp.vm_slot = slot++;
+                    break;
+                }
+                j += con->size;
+            }
+        }
+        else if(it->syntax==grammar::INCLUDE_BLOCK) {
+            int j = i;
+            for (auto con: it->child) {
+                if(con->syntax==grammar::STRING) {
+                    symbol temp;
+                    temp.syntax = con->syntax;
+                    temp.name = con->look;
+                    temp.offset = j;
+                    temp.vm_slot = slot++;
+                }
+                j += con->size;
             }
         }
         i += it->size;
