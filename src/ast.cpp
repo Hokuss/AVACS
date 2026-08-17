@@ -645,3 +645,4 @@ void ast::red_build(){
     root_red = std::make_unique<red_node>(root_green, vm_slot);
     // ast_print(root_red.get(), "", true, true);
 }
+

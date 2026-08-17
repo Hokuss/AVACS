@@ -46,6 +46,7 @@ struct red_node {
     std::unordered_map<std::string_view, symbol> symbols;
 
     red_node(std::shared_ptr<green_node> g,int &vm_slot, observer_ptr<red_node> p = nullptr, int val_start = 0);
+    red_node(observer_ptr<red_node> child);
 
     observer_ptr<symbol> resolve(std::string_view sym) {
         if(symbols.find(sym)!=symbols.end()){
@@ -55,6 +56,10 @@ struct red_node {
         } 
         return nullptr;
     };
+};
+
+struct flat_tree{
+    std::vector<observer_ptr<red_node>> child;
 };
 
 struct token {
@@ -114,6 +119,8 @@ class compiler_context {
     private:
         void lexer_check();
         std::string source = "./webx/out.hex";
+        void full_ast(observer_ptr<red_node> tree_taversal, bool root = false);
+        std::unique_ptr<flat_tree> tree;
         void compile();
 
     public: 
