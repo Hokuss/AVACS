@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <string_view>
 #include <vector>
 
@@ -617,6 +618,30 @@ red_node::red_node(std::shared_ptr<green_node> g,int &vm_slot, observer_ptr<red_
     }
 }
 
+void ast_print(const observer_ptr<red_node> &red_node,
+                    const std::string& prefix,
+                    bool is_last,
+                    bool is_root){
+    if(!red_node) return;
+    std::cout << prefix;
+    if (!is_root) {
+        std::cout << (is_last ? "`-- " : "|-- ");
+    }
+    std::cout << to_lower(grammar_name(red_node -> green ->syntax))
+               << " (" << red_node -> start << ")\n";
+
+    std::string child_prefix = prefix;
+    if (!is_root) {
+        child_prefix += (is_last ? "    " : "|   ");
+    }
+
+    for (size_t i = 0; i < red_node->child.size(); ++i) {
+        bool last_child = (i + 1 == red_node->child.size());
+        ast_print(red_node->child[i].get(), child_prefix, last_child, false);
+    }
+}
+
 void ast::red_build(){
     root_red = std::make_unique<red_node>(root_green, vm_slot);
+    // ast_print(root_red.get(), "", true, true);
 }
