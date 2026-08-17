@@ -113,6 +113,8 @@ class ast{
 class compiler_context {
     private:
         void lexer_check();
+        std::string source = "./webx/out.hex";
+        void compile();
 
     public: 
         std::unordered_map<std::string, std::unique_ptr<ast>> files;
@@ -124,6 +126,7 @@ class compiler_context {
             files[path]->update();
             lexer_check();
             files[path]->red_build();
+            compile();
             
         }
         
