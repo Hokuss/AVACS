@@ -33,5 +33,9 @@ void compiler_context::full_ast(observer_ptr<red_node> tree_taversal, bool root)
 
 void compiler_context::compile(){
     full_ast(files["main.wx"]->root_red.get(), true);
+
+    //Next step print
+    //Start the bytecode generation/IR
+    //Build the VM
 }
 
