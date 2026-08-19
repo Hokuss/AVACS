@@ -17,6 +17,7 @@ add_executable(sandbox
     src/watcher.cpp
     src/utils.cpp
     src/ast.cpp
+    src/compile.cpp
 )
 
 # Link the threading library (Applies to all operating systems)

@@ -167,3 +167,8 @@ constexpr std::array<assertions, 2> rules = {{
     {grammar::INCLUDE_BLOCK, rinc},
     {grammar::WEBSITE_BLOCK, rweb}
 }};
+
+void ast_print(const observer_ptr<red_node> &red_node,
+                    const std::string& prefix,
+                    bool is_last,
+                    bool is_root);
