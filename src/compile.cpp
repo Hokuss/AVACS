@@ -82,7 +82,6 @@ void print_ast(observer_ptr<flat_tree> a){
 
 void compiler_context::compile(){
     full_ast(files["asset/main.wx"]->root_red.get(), true);
-
     print_ast(tree.get());
 
     //Next step print
