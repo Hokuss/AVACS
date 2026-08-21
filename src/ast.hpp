@@ -121,6 +121,7 @@ class compiler_context {
         std::string source = "./webx/out.hex";
         void full_ast(observer_ptr<red_node> tree_taversal, bool root = false);
         std::unique_ptr<flat_tree> tree;
+        void bytecode();
         void compile();
 
     public: 

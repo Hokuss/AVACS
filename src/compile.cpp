@@ -1,8 +1,8 @@
 #include "ast.hpp"
 #include "utils.hpp"
+#include <fstream>
 #include <iostream>
 #include <memory>
-#include <ostream>
 
 namespace {
     enum class opcode : uint8_t {
@@ -80,11 +80,28 @@ void print_ast(observer_ptr<flat_tree> a){
     }
 }
 
+void compiler_context::bytecode(){
+    std::ofstream bytes(source,std::ios::binary | std::ios::trunc);
+    if(!bytes.is_open()) std::cerr<<"This\n";
+    for(observer_ptr<red_node> it: tree->child){
+        if(it->green->syntax==grammar::WEBSITE_BLOCK){
+            bytes<<"WEB ";
+            for (const auto& child: it->child) {
+                if(child->green->syntax==grammar::PATH){
+                    bytes<<1<<"\n";
+                    break;
+                }
+            }
+        }
+    }
+    return;
+}
+
 void compiler_context::compile(){
     full_ast(files["asset/main.wx"]->root_red.get(), true);
-    print_ast(tree.get());
+    // print_ast(tree.get());
+    bytecode();
 
-    //Next step print
     //Start the bytecode generation/IR
     //Build the VM
 }
