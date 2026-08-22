@@ -1,13 +1,7 @@
-include {"apple"}
-
 website \home\ok {
     source = "";
-    red = "tree";
-}
 
-data \tree {
-    connection = "tree";
-    load {
+    load {source};
 
-    }
+    return source;
 }

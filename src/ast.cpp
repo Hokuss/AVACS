@@ -106,6 +106,7 @@ token ast::next_token(){
         if (literal == "update") return {grammar::UPDATE, literal.size(), literal};
         if (literal == "assert") return {grammar::ASSERT, literal.size(), literal};
         if (literal == "include") return {grammar::INCLUDE, literal.size(), literal};
+        if (literal == "return") return {grammar::RETURN, literal.size(), literal};
 
             
         return {grammar::IDENTIFIER, literal.size(), literal};
@@ -201,6 +202,44 @@ std::shared_ptr<green_node> ast::assignment_block() {
     return assign;
 }
 
+//Load File Function
+std::shared_ptr<green_node> ast::load_block(){
+    std::shared_ptr<green_node> load = std::make_shared<green_node>();
+    load->syntax = grammar::LOAD_BLOCK;
+    load->size = 0;
+
+    auto add_child = [&](std::shared_ptr<green_node> child_node) {
+        if (child_node) {
+            load->child.push_back(child_node);
+            load->size += child_node->size;
+        }
+    };
+
+    auto expect_and_add = [&](grammar expected, const std::string& err_msg = "") -> bool {
+        if (peek().type != expected) {
+            if (!err_msg.empty()) {
+                std::cerr << err_msg << std::endl;
+            } else {
+                std::cerr << "Expected - " << grammar_name(expected)
+                          << " Found - " << grammar_name(peek().type) << std::endl;
+            }
+            return false;
+        }
+        add_child(next_leaf());
+        return true;
+    };
+
+    add_child(next_leaf());
+
+    add_child(trivia_block());
+
+    expect_and_add(grammar::OPEN_BRACKET);
+    add_child(trivia_block());
+    expect_and_add(grammar::CLOSE_BRACKET);
+
+    return load;
+}
+
 std::shared_ptr<green_node> ast::web_block() {
     std::shared_ptr<green_node> web = std::make_shared<green_node>();
     web->syntax = grammar::WEBSITE_BLOCK;
@@ -267,43 +306,6 @@ std::shared_ptr<green_node> ast::web_block() {
     expect_and_add(grammar::CLOSE_BRACE, "Expected '}' at end of web block");
 
     return web;
-}
-
-std::shared_ptr<green_node> ast::load_block(){
-    std::shared_ptr<green_node> load = std::make_shared<green_node>();
-    load->syntax = grammar::LOAD_BLOCK;
-    load->size = 0;
-
-    auto add_child = [&](std::shared_ptr<green_node> child_node) {
-        if (child_node) {
-            load->child.push_back(child_node);
-            load->size += child_node->size;
-        }
-    };
-
-    auto expect_and_add = [&](grammar expected, const std::string& err_msg = "") -> bool {
-        if (peek().type != expected) {
-            if (!err_msg.empty()) {
-                std::cerr << err_msg << std::endl;
-            } else {
-                std::cerr << "Expected - " << grammar_name(expected)
-                          << " Found - " << grammar_name(peek().type) << std::endl;
-            }
-            return false;
-        }
-        add_child(next_leaf());
-        return true;
-    };
-
-    add_child(next_leaf());
-
-    add_child(trivia_block());
-
-    expect_and_add(grammar::OPEN_BRACE);
-    add_child(trivia_block());
-    expect_and_add(grammar::CLOSE_BRACE);
-
-    return load;
 }
 
 std::shared_ptr<green_node> ast::update_block(){
