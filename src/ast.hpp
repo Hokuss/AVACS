@@ -85,6 +85,7 @@ class ast{
         std::shared_ptr<green_node> assignment_block();
         std::shared_ptr<green_node> include_block();
         std::shared_ptr<green_node> trivia_block();
+        std::shared_ptr<green_node> return_block();
         int vm_slot = 0;
 
     public:

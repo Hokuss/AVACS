@@ -38,6 +38,7 @@ inline const char* grammar_name(grammar g) {
         case grammar::LOAD:              return "LOAD";
         case grammar::ASSERT:            return "ASSERT";
         case grammar::UPDATE:            return "UPDATE";
+        case grammar::RETURN:            return "RETURN";
         case grammar::INCLUDE:           return "INCLUDE";
         case grammar::WEBSITE_BLOCK:     return "WEBSITE_BLOCK";
         case grammar::DATA_BLOCK:        return "DATA_BLOCK";
@@ -47,6 +48,7 @@ inline const char* grammar_name(grammar g) {
         case grammar::LOAD_BLOCK:        return "LOAD_BLOCK";
         case grammar::UPDATE_BLOCK:      return "UPDATE_BLOCK";
         case grammar::ASSERT_BLOCK:      return "ASSERT_BLOCK";
+        case grammar::RETURN_BLOCK:      return "RETURN_BLOCK";
         default:                         return "UNKNOWN";
     }
 }
@@ -60,8 +62,8 @@ token ast::next_token(){
         case '=': cursor++; return {grammar::EQUAL, 1, source.substr(start,1)};
         case '{': cursor++; return {grammar::OPEN_BRACE, 1, source.substr(start,1)};
         case '}': cursor++; return {grammar::CLOSE_BRACE, 1, source.substr(start, 1)};
-        case '[': cursor++; return {grammar::OPEN_BRACKET, 1, source.substr(start, 1)};
-        case ']': cursor++; return {grammar::CLOSE_BRACKET, 1, source.substr(start, 1)};
+        case '(': cursor++; return {grammar::OPEN_BRACKET, 1, source.substr(start, 1)};
+        case ')': cursor++; return {grammar::CLOSE_BRACKET, 1, source.substr(start, 1)};
         case '+': cursor++; return {grammar::ADD, 1, source.substr(start,1)};
         case '-': cursor++; return {grammar::SUBTRACT, 1, source.substr(start, 1)};
         case '*': cursor++; return {grammar::MULTIPLY, 1, source.substr(start, 1)};
@@ -133,6 +135,40 @@ std::shared_ptr<green_node> ast::next_leaf(){
     return leaf;
 }
 
+//Returner (backbone of the functions)
+std::shared_ptr<green_node> ast::return_block(){
+    std::shared_ptr<green_node> ret = std::make_shared<green_node>();
+    ret->syntax = grammar::RETURN_BLOCK;
+    ret->size = 0;
+    
+    std::shared_ptr<green_node> temp = next_leaf();
+    ret->child.push_back(temp);
+    ret->size += temp->size;
+
+    temp = trivia_block();
+    ret->child.push_back(temp);
+    ret->size+=temp->size;
+
+    grammar check = peek().type;
+    if(check!=grammar::IDENTIFIER){
+        std::cerr<<"Didn't find the return thing for return block";
+        return ret;
+    }
+
+    temp = next_leaf();
+    ret->child.push_back(temp);
+    ret->size += temp->size;
+
+    check = peek().type;
+    if(check!=grammar::EOS){
+        std::cerr<<"Didn't find the ; for return block";
+        return ret;
+    }
+    temp=next_leaf();
+    ret->child.push_back(temp);
+    ret->size+=temp->size;
+    return ret;
+}
 
 //Consume Blank spaces between blocks or functions
 std::shared_ptr<green_node> ast::trivia_block(){
@@ -182,19 +218,27 @@ std::shared_ptr<green_node> ast::assignment_block() {
         return true;
     };
 
-    // 1. Consume IDENTIFIER (already verified before entering function)
     add_child(next_leaf());
     add_child(trivia_block());
 
-    // 2. Expect '='
     if (!expect_and_add(grammar::EQUAL, "Nothing to assign")) return assign;
     add_child(trivia_block());
 
-    // 3. Expect STRING value
-    if (!expect_and_add(grammar::STRING, "No string value to attach")) return assign;
+    grammar rhs_type = peek().type;
+    switch (rhs_type) {
+        case grammar::LOAD: add_child(load_block());
+            break;
+        case grammar::IDENTIFIER: expect_and_add(grammar::IDENTIFIER);
+            break;
+        case grammar::STRING: expect_and_add(grammar::STRING);
+            break;
+        default:
+            std::cerr<<"Expected STRING, IDENTIFIER, or LOAD. Found - " 
+                  << grammar_name(rhs_type) << std::endl;
+            return assign;
+    }
     add_child(trivia_block());
 
-    // 4. Expect EOS (end of statement/line)
     if (!expect_and_add(grammar::EOS, "No end of line Character")) return assign;
 
     assign->look = assign->child[0]->look;
@@ -235,7 +279,10 @@ std::shared_ptr<green_node> ast::load_block(){
 
     expect_and_add(grammar::OPEN_BRACKET);
     add_child(trivia_block());
+    expect_and_add(grammar::IDENTIFIER);
+    add_child(trivia_block());
     expect_and_add(grammar::CLOSE_BRACKET);
+    expect_and_add(grammar::EOS);
 
     return load;
 }
@@ -294,11 +341,16 @@ std::shared_ptr<green_node> ast::web_block() {
             break;
         }
 
-        if (current == grammar::IDENTIFIER) {
-            add_child(assignment_block());
-        } else {
-            std::cerr << "Unexpected token in web block body: " << grammar_name(current) << std::endl;
-            add_child(next_leaf()); // Advance token to prevent infinite loops
+        switch (current) {
+            case grammar::IDENTIFIER: add_child(assignment_block());
+                break;
+            case grammar::RETURN: add_child(return_block());
+                break;
+            case grammar::LOAD: add_child(load_block());
+                break;
+            default:
+                std::cerr << "Unexpected token in web block body: " << grammar_name(current) << std::endl;
+                add_child(next_leaf());
         }
     }
 
@@ -645,6 +697,6 @@ void ast_print(const observer_ptr<red_node> &red_node,
 
 void ast::red_build(){
     root_red = std::make_unique<red_node>(root_green, vm_slot);
-    // ast_print(root_red.get(), "", true, true);
+    ast_print(root_red.get(), "", true, true);
 }
 
