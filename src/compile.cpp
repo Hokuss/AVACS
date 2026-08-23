@@ -1,8 +1,12 @@
 #include "ast.hpp"
 #include "utils.hpp"
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace {
     enum class opcode : uint8_t {
@@ -14,6 +18,8 @@ namespace {
         UPDATE_DATA
     };
     
+    std::unordered_map<std::string, uint64_t> location;
+    std::unordered_map<std::string, std::vector<uint64_t>> backprocess; 
 }
 
 
@@ -80,18 +86,30 @@ void print_ast(observer_ptr<flat_tree> a){
     }
 }
 
+std::string assignment(){
+    return "";
+}
+
 void compiler_context::bytecode(){
     std::ofstream bytes(source,std::ios::binary | std::ios::trunc);
-    if(!bytes.is_open()) std::cerr<<"This\n";
+    if(!bytes.is_open()) std::cerr<<"JMP 0xFFFFFF\n";
+    bytes<<"JMP 0xFFFFFF\n";
+    uint64_t reg = 0;
+    uint64_t i = 13;
     for(observer_ptr<red_node> it: tree->child){
         if(it->green->syntax==grammar::WEBSITE_BLOCK){
-            bytes<<"WEB ";
-            for (const auto& child: it->child) {
-                if(child->green->syntax==grammar::PATH){
-                    bytes<<1<<"\n";
-                    break;
+            for(auto per: it-> green -> child){
+                switch (per->syntax) {
+                    case grammar::PATH: location[std::string(per->look)] = i;
+                        break;
+                    case grammar::ASSIGNMENT: bytes<<"REG R" << reg++ <<"\n";
+                        break;
+                    default: 
+                        break;
+                        
                 }
             }
+
         }
     }
     return;
