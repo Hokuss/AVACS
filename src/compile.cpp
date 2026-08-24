@@ -17,6 +17,9 @@ namespace {
         LOAD_DATA,
         UPDATE_DATA
     };
+    struct reg {
+
+    };
     
     std::unordered_map<std::string, uint64_t> location;
     std::unordered_map<std::string, std::vector<uint64_t>> backprocess; 
@@ -86,7 +89,16 @@ void print_ast(observer_ptr<flat_tree> a){
     }
 }
 
-std::string assignment(){
+std::string resolve_assignment(std::shared_ptr<green_node> a, uint64_t reg){
+    auto it = a->child[4];
+    if(it->syntax==grammar::STRING) {
+
+        return "LOAD R" + std::to_string(reg) + "," + std::string(it->look);
+    }
+    else if (it->syntax==grammar::LOAD_BLOCK){
+        std::string ans = "READ_FILE ";
+        // auto file
+    }
     return "";
 }
 
@@ -102,7 +114,9 @@ void compiler_context::bytecode(){
                 switch (per->syntax) {
                     case grammar::PATH: location[std::string(per->look)] = i;
                         break;
-                    case grammar::ASSIGNMENT: bytes<<"REG R" << reg++ <<"\n";
+                    case grammar::ASSIGNMENT: 
+                        bytes<<resolve_assignment(per, reg);
+                        reg++;
                         break;
                     default: 
                         break;
