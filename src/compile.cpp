@@ -2,26 +2,21 @@
 #include "utils.hpp"
 #include <cstdint>
 #include <fstream>
+#include <iosfwd>
 #include <iostream>
 #include <memory>
+#include <stack>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace {
-    enum class opcode : uint8_t {
-        LOAD_SLOT,
-        STORE_SLOT,
-        LOAD_PATH,
-        CONNECT,
-        LOAD_DATA,
-        UPDATE_DATA
-    };
-    struct reg {
-
-    };
+    uint64_t reg;
+    int scope;
+    std::stack<int> locals;
     
-    std::unordered_map<std::string, uint64_t> location;
+    std::unordered_map<std::string, int> pos;
+    std::unordered_map<std::string, std::streampos> location;
     std::unordered_map<std::string, std::vector<uint64_t>> backprocess; 
 }
 
@@ -65,6 +60,17 @@ inline const char* grammar_name(grammar g) {
     }
 }
 
+void pop_scope(){
+    reg = locals.top();
+    locals.pop();
+    scope--;
+}
+
+void add_scope(){
+    scope++;
+    locals.push(reg);
+}
+
 
 void compiler_context::full_ast(observer_ptr<red_node> tree_taversal, bool root){
     if(root) tree = std::make_unique<flat_tree>();
@@ -89,15 +95,27 @@ void print_ast(observer_ptr<flat_tree> a){
     }
 }
 
-std::string resolve_assignment(std::shared_ptr<green_node> a, uint64_t reg){
+std::string resolve_load(std::shared_ptr<green_node> loader){
+    std::string ans;
+    if(loader->child[4]->syntax==grammar::STRING){
+        add_scope();
+        ans = "LOAD R"+std::to_string(reg++)+","+std::string(loader->child[4]->look)+"\n";
+        ans += "FILER R"+std::to_string(reg-1) + "\n";
+        pop_scope();
+        return ans;
+    }
+    ans = "FILE R"+(std::to_string(reg++))+", R"+std::to_string(pos[std::string(loader->child[4]->look)])+"\n";
+    return ans;
+}
+
+std::string resolve_assignment(std::shared_ptr<green_node> a){
     auto it = a->child[4];
     if(it->syntax==grammar::STRING) {
-
-        return "LOAD R" + std::to_string(reg) + "," + std::string(it->look);
+        return "LOAD R" + std::to_string(reg++) + "," + std::string(it->look)+"\n";
     }
     else if (it->syntax==grammar::LOAD_BLOCK){
-        std::string ans = "READ_FILE ";
-        // auto file
+        pos[std::string(a->child[0]->look)] = reg;
+        return resolve_load(it);
     }
     return "";
 }
@@ -106,17 +124,20 @@ void compiler_context::bytecode(){
     std::ofstream bytes(source,std::ios::binary | std::ios::trunc);
     if(!bytes.is_open()) std::cerr<<"JMP 0xFFFFFF\n";
     bytes<<"JMP 0xFFFFFF\n";
-    uint64_t reg = 0;
-    uint64_t i = 13;
+    reg = 0;
     for(observer_ptr<red_node> it: tree->child){
         if(it->green->syntax==grammar::WEBSITE_BLOCK){
+            add_scope();
             for(auto per: it-> green -> child){
                 switch (per->syntax) {
-                    case grammar::PATH: location[std::string(per->look)] = i;
+                    case grammar::PATH: location[std::string(per->look)] = bytes.tellp();
                         break;
                     case grammar::ASSIGNMENT: 
-                        bytes<<resolve_assignment(per, reg);
+                        bytes<<resolve_assignment(per);
                         reg++;
+                        break;
+                    case grammar::LOAD_BLOCK:
+                        bytes<<resolve_load(per);
                         break;
                     default: 
                         break;
