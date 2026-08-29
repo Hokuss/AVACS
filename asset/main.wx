@@ -1,4 +1,4 @@
-website \home\ok {
+website \home {
     source = "tree";
 
     tree = load (source);

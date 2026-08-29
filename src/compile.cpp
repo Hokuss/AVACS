@@ -5,6 +5,7 @@
 #include <iosfwd>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -20,6 +21,12 @@ namespace {
     std::unordered_map<std::string, std::vector<uint64_t>> backprocess; 
 }
 
+std::string toHex(std::streampos pos, int width = 8) {
+    std::ostringstream oss;
+    oss << std::setfill('0') << std::setw(width) << std::hex << std::uppercase 
+        << static_cast<std::streamoff>(pos);
+    return oss.str();
+}
 
 inline const char* grammar_name(grammar g) {
     switch (g) {
@@ -73,7 +80,10 @@ void add_scope(){
 
 
 void compiler_context::full_ast(observer_ptr<red_node> tree_taversal, bool root){
-    if(root) tree = std::make_unique<flat_tree>();
+    if(root) {
+        std::cerr<<"Creating new tree\n";
+        tree = std::make_unique<flat_tree>();
+    }
     if(!tree_taversal) return;
     for(const auto& it: tree_taversal->child){
         if (it->green->syntax==grammar::INCLUDE_BLOCK) {
@@ -121,6 +131,7 @@ std::string resolve_assignment(std::shared_ptr<green_node> a){
 }
 
 void compiler_context::bytecode(){
+    location.clear();
     std::ofstream bytes(source,std::ios::binary | std::ios::trunc);
     if(!bytes.is_open()) std::cerr<<"JMP 0xFFFFFF\n";
     bytes<<"JMP 0xFFFFFF\n";
@@ -149,6 +160,12 @@ void compiler_context::bytecode(){
             pop_scope();
         }
     }
+    std::streampos finalpos = bytes.tellp();
+    for(auto it:location){
+        bytes<<"CJMP "<<it.first<<","<<toHex(it.second)<<"\n";
+    }
+    bytes.seekp(0);
+    bytes<<"JMP "<<toHex(finalpos)<<"\n";
     return;
 }
 
