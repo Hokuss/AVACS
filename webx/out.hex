@@ -1,3 +1,4 @@
 JMP 0xFFFFFF
 LOAD R0,"tree"
 FILE R1, R0
+RET R0

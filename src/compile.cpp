@@ -138,12 +138,15 @@ void compiler_context::bytecode(){
                     case grammar::LOAD_BLOCK:
                         bytes<<resolve_load(per);
                         break;
+                    case grammar::RETURN_BLOCK:
+                        bytes<<"RET R"<<pos[std::string(per->child[2]->look)]<<"\n";
+                        break;
                     default: 
                         break;
                         
                 }
             }
-
+            pop_scope();
         }
     }
     return;
