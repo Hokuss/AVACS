@@ -134,7 +134,6 @@ void compiler_context::bytecode(){
                         break;
                     case grammar::ASSIGNMENT: 
                         bytes<<resolve_assignment(per);
-                        reg++;
                         break;
                     case grammar::LOAD_BLOCK:
                         bytes<<resolve_load(per);

@@ -279,10 +279,18 @@ std::shared_ptr<green_node> ast::load_block(){
 
     expect_and_add(grammar::OPEN_BRACKET);
     add_child(trivia_block());
-    expect_and_add(grammar::IDENTIFIER);
+    switch (peek().type) {
+        case grammar::IDENTIFIER:
+            expect_and_add(grammar::IDENTIFIER);
+            break;
+        case grammar::STRING:
+            expect_and_add(grammar::STRING);
+            break;
+        default:
+            expect_and_add(grammar::STRING);
+    }
     add_child(trivia_block());
     expect_and_add(grammar::CLOSE_BRACKET);
-    expect_and_add(grammar::EOS);
 
     return load;
 }

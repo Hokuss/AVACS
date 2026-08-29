@@ -1,3 +1,3 @@
 JMP 0xFFFFFF
-LOAD R0,""
-FILE R2, R0
+LOAD R0,"tree"
+FILE R1, R0
