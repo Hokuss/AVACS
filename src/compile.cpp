@@ -1,6 +1,7 @@
 #include "ast.hpp"
 #include "utils.hpp"
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <iosfwd>
 #include <iostream>
@@ -173,7 +174,7 @@ void compiler_context::compile(){
     full_ast(files["asset/main.wx"]->root_red.get(), true);
     // print_ast(tree.get());
     bytecode();
-
+    fs::rename(source, destination);
     //Start the bytecode generation/IR
     //Build the VM
 }

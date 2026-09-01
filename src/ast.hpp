@@ -120,6 +120,7 @@ class compiler_context {
     private:
         void lexer_check();
         std::string source = "./webx/out.hex";
+        std::string destination = "./webx/final.hex";
         void full_ast(observer_ptr<red_node> tree_taversal, bool root = false);
         std::unique_ptr<flat_tree> tree;
         void bytecode();
