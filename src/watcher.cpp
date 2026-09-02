@@ -50,7 +50,7 @@ void loop(std::stop_token stop, std::string main){
     }
 }
 
-void vm_loop(std::stop_token stop){
-    fs::path final = "./webx/final.hex";
+std::string request::process(){
     
+    return "";
 }

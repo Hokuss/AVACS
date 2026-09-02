@@ -5,7 +5,6 @@
 #include <string_view>
 
 void loop(std::stop_token stop, std::string main);
-void vm_loop(std::stop_token stop);
 
 class request{
     std::string_view main;
@@ -15,5 +14,5 @@ class request{
             main = req;
         }
 
-        
+        std::string process();
 };
