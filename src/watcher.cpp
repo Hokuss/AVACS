@@ -1,10 +1,12 @@
 #include "watcher.hpp"
 #include "ast.hpp"
+#include "utils.hpp"
 #include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <ostream>
 #include <stop_token>
+#include <string_view>
 #include <thread>
 
 namespace fs = std::filesystem;
@@ -50,7 +52,42 @@ void loop(std::stop_token stop, std::string main){
     }
 }
 
+void request::reader(){
+    content = read_file("./webx/final.hex");
+}
+
+void request::parse_request(){
+    enum class pos_type {
+        METHOD, TYPE, PATH,
+        HEADER,
+        CONTENT,
+        ER
+    };
+    pos_type current = pos_type::METHOD;
+    observer_ptr<const char> sptr, eptr, end;
+
+    sptr = main.data();
+    eptr = main.data();
+    end = main.data() + main.size();
+    while (eptr<end && current!= pos_type::ER) {
+        switch (current) {
+            case pos_type::METHOD:
+                if(*eptr==' '){
+                    std::string_view cut = std::string_view(sptr, eptr-sptr);
+                    sptr = eptr + 1;
+                    // if(cut=="")
+                }
+                break;
+            default:
+                std::cerr<<"Not Defined"<<std::endl;
+        };
+        eptr++;
+    }
+}
+
+
 std::string request::process(){
+    parse_request();
     
     return "";
 }

@@ -161,6 +161,7 @@ int main() {
         }
 
         // --- HANDLE THE REQUEST HERE ---
+        request main_request;
         std::string buffer;
         char chunk[1024];
         int bytes_rec = 0;
@@ -229,8 +230,7 @@ int main() {
         }
 
         std::string_view request_view(buffer);
-
-        request main_request(buffer);
+        main_request.main = request_view;
         std::string response = main_request.process();
                 
         if (!send_all(client_socket, response.c_str(), response.length())) {
