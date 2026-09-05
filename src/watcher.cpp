@@ -58,9 +58,12 @@ void request::reader(){
 
 void request::parse_request(){
     enum class pos_type {
-        METHOD, TYPE, PATH,
-        HEADER,
-        CONTENT,
+        METHOD, 
+        TYPE, 
+        PATH,
+        HEADER_KEY,
+        HEADER_VALUE,
+        BODY,
         ER
     };
     pos_type current = pos_type::METHOD;
@@ -69,15 +72,67 @@ void request::parse_request(){
     sptr = main.data();
     eptr = main.data();
     end = main.data() + main.size();
+    std::string_view temp_key;
     while (eptr<end && current!= pos_type::ER) {
         switch (current) {
             case pos_type::METHOD:
                 if(*eptr==' '){
                     std::string_view cut = std::string_view(sptr, eptr-sptr);
                     sptr = eptr + 1;
-                    // if(cut=="")
+                    if(cut=="GET") method = req_type::GET;
+                    else if (cut=="POST") method = req_type::POST;
+                    else if (cut=="PUT") method = req_type::PUT;
+                    else if (cut=="DELETE") method = req_type::DELETE;
+                    else if (cut=="PATCH") method = req_type::PATCH;
+                    else method = req_type::DITCH;
+
+                    current = pos_type::PATH;
                 }
                 break;
+
+            case pos_type::PATH:
+                if(*eptr==' '){
+                    path = std::string_view(sptr, eptr-sptr);
+                    sptr = eptr+1;
+                    current = pos_type::TYPE;
+                }
+                break;
+
+            case pos_type::TYPE:
+                if (eptr+1<end && *eptr=='\r' && *(eptr+1)=='\n') {
+                    version = std::string_view(sptr, eptr-sptr);
+                    sptr = eptr+1;
+                    current = pos_type::HEADER_KEY;
+                }
+                break;
+
+            case pos_type::HEADER_KEY:
+                if (eptr+1<end && *eptr=='\r' && *(eptr+1)=='\n'){
+                    eptr++;
+                    sptr = eptr+1;
+                    current = pos_type::BODY;
+                } else if (*eptr==':') {
+                    temp_key = std::string_view(sptr, eptr - sptr);
+                    sptr = eptr + 1;
+                    
+                    // Skip leading whitespace after ':'
+                    while (sptr < end && *sptr == ' ') {
+                        sptr++;
+                    }
+                    eptr = sptr - 1; // Align scanner pointer
+                    current = pos_type::HEADER_VALUE;
+                }
+                break;
+
+            case pos_type::HEADER_VALUE:
+                if (eptr + 1 < end && *eptr == '\r' && *(eptr + 1) == '\n') {
+                    headers[temp_key] = std::string_view(sptr, eptr - sptr);
+                    eptr++; // Consume '\r'
+                    sptr = eptr + 1;
+                    current = pos_type::HEADER_KEY;
+                }
+                break;
+                
             default:
                 std::cerr<<"Not Defined"<<std::endl;
         };
@@ -88,6 +143,9 @@ void request::parse_request(){
 
 std::string request::process(){
     parse_request();
+    if(extra.joinable()){
+        extra.join();
+    }
     
     return "";
 }
