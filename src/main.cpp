@@ -126,6 +126,7 @@ int main() {
     std::cout << "Press Ctrl+C to stop." << std::endl;
 
     std::jthread watcher(loop, "asset/main.wx");
+    // std::jthread start_vm(vm_loop);
 
     // server loop
     while (server_running) {
@@ -229,12 +230,8 @@ int main() {
 
         std::string_view request_view(buffer);
 
-        std::string response = "HTTP/1.1 200 OK\r\n"
-                       "Content-Type: text/plain\r\n"
-                       "Content-Length: 13\r\n"
-                       "Connection: close\r\n"
-                       "\r\n"
-                       "Hello, World!";
+        request main_request(buffer);
+        std::string response = main_request.process();
                 
         if (!send_all(client_socket, response.c_str(), response.length())) {
             std::cerr << "Failed to send complete response to client." << std::endl;
@@ -249,6 +246,7 @@ int main() {
     std::cout << "Main Loop Closed." << std::endl;
 
     watcher.request_stop();
+    // start_vm.request_stop();
 
     std::cout << "Clean stop of side loop..." << std::endl;
 

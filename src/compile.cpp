@@ -1,21 +1,33 @@
 #include "ast.hpp"
 #include "utils.hpp"
+#include <cstdint>
+#include <filesystem>
 #include <fstream>
+#include <iosfwd>
 #include <iostream>
 #include <memory>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace {
-    enum class opcode : uint8_t {
-        LOAD_SLOT,
-        STORE_SLOT,
-        LOAD_PATH,
-        CONNECT,
-        LOAD_DATA,
-        UPDATE_DATA
-    };
+    uint64_t reg;
+    int scope;
+    std::stack<int> locals;
     
+    std::unordered_map<std::string, int> pos;
+    std::unordered_map<std::string, std::streampos> location;
+    std::unordered_map<std::string, std::vector<uint64_t>> backprocess; 
 }
 
+std::string toHex(std::streampos pos, int width = 8) {
+    std::ostringstream oss;
+    oss << std::setfill('0') << std::setw(width) << std::hex << std::uppercase 
+        << static_cast<std::streamoff>(pos);
+    return oss.str();
+}
 
 inline const char* grammar_name(grammar g) {
     switch (g) {
@@ -56,9 +68,23 @@ inline const char* grammar_name(grammar g) {
     }
 }
 
+void pop_scope(){
+    reg = locals.top();
+    locals.pop();
+    scope--;
+}
+
+void add_scope(){
+    scope++;
+    locals.push(reg);
+}
+
 
 void compiler_context::full_ast(observer_ptr<red_node> tree_taversal, bool root){
-    if(root) tree = std::make_unique<flat_tree>();
+    if(root) {
+        std::cerr<<"Creating new tree\n";
+        tree = std::make_unique<flat_tree>();
+    }
     if(!tree_taversal) return;
     for(const auto& it: tree_taversal->child){
         if (it->green->syntax==grammar::INCLUDE_BLOCK) {
@@ -80,16 +106,67 @@ void print_ast(observer_ptr<flat_tree> a){
     }
 }
 
+std::string resolve_load(std::shared_ptr<green_node> loader){
+    std::string ans;
+    if(loader->child[4]->syntax==grammar::STRING){
+        add_scope();
+        ans = "LOAD R"+std::to_string(reg++)+","+std::string(loader->child[4]->look)+"\n";
+        ans += "FILER R"+std::to_string(reg-1) + "\n";
+        pop_scope();
+        return ans;
+    }
+    ans = "FILE R"+(std::to_string(reg++))+", R"+std::to_string(pos[std::string(loader->child[4]->look)])+"\n";
+    return ans;
+}
+
+std::string resolve_assignment(std::shared_ptr<green_node> a){
+    auto it = a->child[4];
+    if(it->syntax==grammar::STRING) {
+        return "LOAD R" + std::to_string(reg++) + "," + std::string(it->look)+"\n";
+    }
+    else if (it->syntax==grammar::LOAD_BLOCK){
+        pos[std::string(a->child[0]->look)] = reg;
+        return resolve_load(it);
+    }
+    return "";
+}
+
 void compiler_context::bytecode(){
+    location.clear();
     std::ofstream bytes(source,std::ios::binary | std::ios::trunc);
-    if(!bytes.is_open()) std::cerr<<"This\n";
+    if(!bytes.is_open()) std::cerr<<"JMP 0xFFFFFF\n";
+    bytes<<"JMP 0xFFFFFF\n";
+    reg = 0;
     for(observer_ptr<red_node> it: tree->child){
         if(it->green->syntax==grammar::WEBSITE_BLOCK){
-            //Add the web path for switch case
-            //Add the loaders 
-            //return functions
+            add_scope();
+            for(auto per: it-> green -> child){
+                switch (per->syntax) {
+                    case grammar::PATH: location[std::string(per->look)] = bytes.tellp();
+                        break;
+                    case grammar::ASSIGNMENT: 
+                        bytes<<resolve_assignment(per);
+                        break;
+                    case grammar::LOAD_BLOCK:
+                        bytes<<resolve_load(per);
+                        break;
+                    case grammar::RETURN_BLOCK:
+                        bytes<<"RET R"<<pos[std::string(per->child[2]->look)]<<"\n";
+                        break;
+                    default: 
+                        break;
+                        
+                }
+            }
+            pop_scope();
         }
     }
+    std::streampos finalpos = bytes.tellp();
+    for(auto it:location){
+        bytes<<"CJMP "<<it.first<<","<<toHex(it.second)<<"\n";
+    }
+    bytes.seekp(0);
+    bytes<<"JMP "<<toHex(finalpos)<<"\n";
     return;
 }
 
@@ -97,7 +174,7 @@ void compiler_context::compile(){
     full_ast(files["asset/main.wx"]->root_red.get(), true);
     // print_ast(tree.get());
     bytecode();
-
+    fs::rename(source, destination);
     //Start the bytecode generation/IR
     //Build the VM
 }

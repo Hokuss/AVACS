@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <iostream>
 #include <ostream>
+#include <stop_token>
 #include <thread>
 
 namespace fs = std::filesystem;
@@ -47,4 +48,9 @@ void loop(std::stop_token stop, std::string main){
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+}
+
+std::string request::process(){
+    
+    return "";
 }

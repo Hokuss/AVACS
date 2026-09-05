@@ -1,0 +1,17 @@
+SO what i need is the explaination of the each type;
+
+1> read file needs a path of what to read and then handle the path. (vector with uint8_t)
+2> everything under the hood with the uint8_t. 
+3> then we can hanldle the things using the add, remove isntruction
+4> standardize the tasks first. 
+
+Rules->
+No functions inside other functions. 
+Recursive calls to resolve everything. to maintain the readability.
+Website/Data/Logic functions are handled the same way. change at lexographic check for better way. 
+Register logic.
+
+
+Steps for each process
+Load File -> place the source in one register if not already load the file in the output register
+The plus, multiplactor operator for string. 
