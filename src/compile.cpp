@@ -85,13 +85,9 @@ void compiler_context::bytecode(){
     if(!bytes.is_open()) std::cerr<<"This\n";
     for(observer_ptr<red_node> it: tree->child){
         if(it->green->syntax==grammar::WEBSITE_BLOCK){
-            bytes<<"WEB ";
-            for (const auto& child: it->child) {
-                if(child->green->syntax==grammar::PATH){
-                    bytes<<1<<"\n";
-                    break;
-                }
-            }
+            //Add the web path for switch case
+            //Add the loaders 
+            //return functions
         }
     }
     return;
