@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
+
 namespace {
     uint64_t reg;
     int scope;
