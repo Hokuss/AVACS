@@ -140,12 +140,15 @@ void request::parse_request(){
     }
 }
 
+void vm_loop(){
+    
+}
+
 
 std::string request::process(){
     parse_request();
     if(extra.joinable()){
         extra.join();
     }
-    
-    return "";
+    return ans;
 }

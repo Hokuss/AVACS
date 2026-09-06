@@ -27,6 +27,8 @@ class request {
         std::string_view path, version;
         std::unordered_map<std::string_view, std::string_view> headers;
         std::string_view body;
+        std::string ans;
+        void vm_loop();
 
     public:
         request() 
