@@ -116,7 +116,7 @@ std::string resolve_load(std::shared_ptr<green_node> loader){
         pop_scope();
         return ans;
     }
-    ans = "FILE R"+(std::to_string(reg++))+", R"+std::to_string(pos[std::string(loader->child[4]->look)])+"\n";
+    ans = "FILE R"+(std::to_string(reg++))+",R"+std::to_string(pos[std::string(loader->child[4]->look)])+"\n";
     return ans;
 }
 

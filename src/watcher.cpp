@@ -2,11 +2,14 @@
 #include "ast.hpp"
 #include "utils.hpp"
 #include <chrono>
+#include <map>
 #include <filesystem>
 #include <iostream>
 #include <ostream>
 #include <stop_token>
+#include <string>
 #include <string_view>
+#include <system_error>
 #include <thread>
 
 namespace fs = std::filesystem;
@@ -140,8 +143,48 @@ void request::parse_request(){
     }
 }
 
-void vm_loop(){
+enum class op_code {
+    //Jumping Instructions
+    JMP,CJMP,
+
+    //Register Loader
+    LOAD,
+
+    //File Interaction
+    FILER, FILE,
+
+    //Final return Statement
+    RET,
+
+    //Reduntant
+    ER
+};
+
+void request::vm_loop(){
+    std::map<int, std::vector<uint8_t>> registers;
+    size_t i = 0, j = 0;
+
+    auto helper = [](std::string_view a){
+        if(a=="LOAD") return op_code::LOAD;
+        else if (a=="RET") return op_code::RET;
+        else if (a=="JMP") return op_code::JMP;
+        else if (a=="CJMP") return op_code::CJMP;
+        else if (a=="FILER") return op_code::RET;
+        else if (a=="FILE") return op_code::FILE;
+        else return op_code::ER;
+    };
+    op_code current = op_code::ER;
     
+    while(true && i<content.size()){
+        if(current==op_code::ER && content[i]==' '){
+            std::string_view temp = std::string_view(content).substr(j, i-j);
+            current = helper(temp);
+            j=i+1;
+        } else if (content[i]==',' | content[i]=='\n') {
+            
+        } 
+        i++;
+    }
 }
 
 
@@ -149,6 +192,7 @@ std::string request::process(){
     parse_request();
     if(extra.joinable()){
         extra.join();
+        vm_loop();
     }
     return ans;
 }
