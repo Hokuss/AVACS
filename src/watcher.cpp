@@ -2,6 +2,7 @@
 #include "ast.hpp"
 #include "utils.hpp"
 #include <chrono>
+#include <cstdint>
 #include <map>
 #include <filesystem>
 #include <iostream>
@@ -11,6 +12,7 @@
 #include <string_view>
 #include <system_error>
 #include <thread>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -163,6 +165,8 @@ enum class op_code {
 void request::vm_loop(){
     std::map<int, std::vector<uint8_t>> registers;
     size_t i = 0, j = 0;
+    std::vector<uint8_t> activeregs[4];
+    int k = 0;
 
     auto helper = [](std::string_view a){
         if(a=="LOAD") return op_code::LOAD;
@@ -174,15 +178,32 @@ void request::vm_loop(){
         else return op_code::ER;
     };
     op_code current = op_code::ER;
-    
+
     while(true && i<content.size()){
         if(current==op_code::ER && content[i]==' '){
             std::string_view temp = std::string_view(content).substr(j, i-j);
             current = helper(temp);
             j=i+1;
-        } else if (content[i]==',' | content[i]=='\n') {
+        } else if (content[i]==',') {
+            if(content[j]=='R'){
+                int regnum = std::stoi(content.substr(j+1, i-j));
+                activeregs[k++] = registers[regnum];
+            } else if (content[j]=='"') {
+                std::string_view temp = std::string_view(content).substr(j+1,i-j-1);
+                activeregs[k++].assign(temp.begin(), temp.end());
+            } else if (std::isdigit(content[j])) {
+                std::string temp = content.substr(j, i-j);
+                long long val = std::stoll(temp);
+                activeregs[k].clear();
+                do {
+                    activeregs[k].push_back(static_cast<uint8_t>(val & 0xFF));
+                    val >>= 8;
+                } while (val>0);
+                k++;
+            }
+        } else if (content[i]=='\n') {
             
-        } 
+        }
         i++;
     }
 }

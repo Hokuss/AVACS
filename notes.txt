@@ -15,3 +15,15 @@ Register logic.
 Steps for each process
 Load File -> place the source in one register if not already load the file in the output register
 The plus, multiplactor operator for string. 
+
+
+So how to process the instructions?
+ADD r1,r2,r3
+1. Reading is easy
+2. declare a part of memory as the r1. (active at the time operation, not required) at runtime.
+3. load r2 and r3 and then add.
+4. then add the r1 in the map. 
+
+Future Aspirations ->
+1> Do the decode and running parallely
+2> 
