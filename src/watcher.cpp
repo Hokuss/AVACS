@@ -10,7 +10,6 @@
 #include <stop_token>
 #include <string>
 #include <string_view>
-#include <system_error>
 #include <thread>
 #include <vector>
 
@@ -20,9 +19,33 @@ namespace {
     fs::file_time_type last_updated;
     fs::path main_loc;
 
-    bool replace = false;
+    std::map<int, std::vector<uint8_t>> registers;
 
+    /*
+        Active operation and reversing it (may remove the activeregs later and directly use activenum as a pointer method)
+        Immediate values are the reason, not doing it
+    */
+    std::vector<uint8_t> activeregs[4];
+    int activenum[4];
+
+    enum class op_code {
+        //Jumping Instructions
+        JMP,CJMP,
+
+        //Register Loader
+        LOAD,
+
+        //File Interaction
+        FILER, FILE,
+
+        //Final return Statement
+        RET,
+
+        //Reduntant
+        ER
+    };
     
+    op_code current = op_code::ER;
 }
 compiler_context wx_compiler;
 
@@ -145,27 +168,8 @@ void request::parse_request(){
     }
 }
 
-enum class op_code {
-    //Jumping Instructions
-    JMP,CJMP,
-
-    //Register Loader
-    LOAD,
-
-    //File Interaction
-    FILER, FILE,
-
-    //Final return Statement
-    RET,
-
-    //Reduntant
-    ER
-};
-
 void request::vm_loop(){
-    std::map<int, std::vector<uint8_t>> registers;
     size_t i = 0, j = 0;
-    std::vector<uint8_t> activeregs[4];
     int k = 0;
 
     auto helper = [](std::string_view a){
@@ -177,21 +181,23 @@ void request::vm_loop(){
         else if (a=="FILE") return op_code::FILE;
         else return op_code::ER;
     };
-    op_code current = op_code::ER;
 
     while(true && i<content.size()){
         if(current==op_code::ER && content[i]==' '){
             std::string_view temp = std::string_view(content).substr(j, i-j);
             current = helper(temp);
             j=i+1;
-        } else if (content[i]==',') {
+        } else if (content[i]==',' | content[i]=='\n') {
             if(content[j]=='R'){
                 int regnum = std::stoi(content.substr(j+1, i-j));
+                activenum[k] = regnum;
                 activeregs[k++] = registers[regnum];
             } else if (content[j]=='"') {
                 std::string_view temp = std::string_view(content).substr(j+1,i-j-1);
+                activenum[k] = -1;
                 activeregs[k++].assign(temp.begin(), temp.end());
             } else if (std::isdigit(content[j])) {
+                activenum[k] = -1;
                 std::string temp = content.substr(j, i-j);
                 long long val = std::stoll(temp);
                 activeregs[k].clear();
@@ -201,13 +207,12 @@ void request::vm_loop(){
                 } while (val>0);
                 k++;
             }
-        } else if (content[i]=='\n') {
-            
-        }
+            j=i+1;
+            if(content[i]=='\n') execute(); //execution code
+        } 
         i++;
     }
 }
-
 
 std::string request::process(){
     parse_request();
@@ -216,4 +221,14 @@ std::string request::process(){
         vm_loop();
     }
     return ans;
+}
+
+void request::execute(){
+    switch (current) {
+        case op_code::RET:
+            ans = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
+            break;
+        default:
+            return;
+    }
 }

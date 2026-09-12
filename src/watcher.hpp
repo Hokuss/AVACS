@@ -20,6 +20,7 @@ enum class req_type{
 class request {
     private:
         std::string content;
+        void execute();
         void reader();
         void parse_request();
         std::thread extra;
