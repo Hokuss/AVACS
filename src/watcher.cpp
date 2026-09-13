@@ -2,6 +2,7 @@
 #include "ast.hpp"
 #include "utils.hpp"
 #include <chrono>
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <filesystem>
@@ -38,6 +39,9 @@ namespace {
         //File Interaction
         FILER, FILE,
 
+        //Checking the Request
+        PCH,
+
         //Final return Statement
         RET,
 
@@ -46,6 +50,7 @@ namespace {
     };
     
     op_code current = op_code::ER;
+    size_t pc = 0;
 }
 compiler_context wx_compiler;
 
@@ -179,6 +184,7 @@ void request::vm_loop(){
         else if (a=="CJMP") return op_code::CJMP;
         else if (a=="FILER") return op_code::RET;
         else if (a=="FILE") return op_code::FILE;
+        else if (a=="PCH") return op_code::PCH;
         else return op_code::ER;
     };
 
@@ -208,7 +214,11 @@ void request::vm_loop(){
                 k++;
             }
             j=i+1;
-            if(content[i]=='\n') execute(); //execution code
+            if(content[i]=='\n') {
+                execute(); //execution code
+                j = pc;
+                i = pc-1;
+            }
         } 
         i++;
     }
@@ -226,8 +236,42 @@ std::string request::process(){
 void request::execute(){
     switch (current) {
         case op_code::RET:
+        {
             ans = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
             break;
+        }
+        case op_code::JMP:
+        {
+            pc = 0;
+            for (size_t i = 0; i < activeregs[0].size(); ++i) {
+                pc |= static_cast<uint32_t>(activeregs[0][i]) << (8 * i);
+            }
+            break;
+        }
+        case op_code::PCH:
+        {
+            std::string cmp = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
+            if (path==cmp) {
+                pc = 0;
+                for (size_t i = 0; i < activeregs[1].size(); ++i) {
+                    pc |= static_cast<uint32_t>(activeregs[1][i]) << (8 * i);
+                }
+            }
+            break;
+        }
+        case op_code::LOAD:
+        {
+            registers[activenum[0]] = activeregs[1];
+            break;
+        }
+        case op_code::FILER:
+        {
+            
+        }
+        case op_code::FILE:
+        {
+
+        }
         default:
             return;
     }
