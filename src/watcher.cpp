@@ -266,9 +266,18 @@ void request::execute(){
         }
         case op_code::FILER:
         {
-            
+            std::string temp = std::string(reinterpret_cast<const char*>(activeregs[0].data()),activeregs[0].size());
+            std::string file = read_file(temp);
+            registers[activenum[0]].assign(file.begin(), file.end());
+            break;
         }
         case op_code::FILE:
+        {
+            std::string file = read_file(std::string(reinterpret_cast<const char*>(activeregs[1].data()), activeregs[1].size()));
+            registers[activenum[1]].assign(file.begin(), file.end());
+            break;
+        }
+        case op_code::CJMP:
         {
 
         }
