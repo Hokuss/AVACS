@@ -25,8 +25,8 @@ namespace {
 
 std::string toHex(std::streampos pos, int width = 8) {
     std::ostringstream oss;
-    oss << std::setfill('0') << std::setw(width) << std::hex << std::uppercase 
-        << static_cast<std::streamoff>(pos);
+    oss << std::setfill('0') << std::setw(width) << std::dec 
+        << static_cast<long long>(static_cast<std::streamoff>(pos));
     return oss.str();
 }
 

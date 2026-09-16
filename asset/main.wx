@@ -1,7 +1,5 @@
-website \home {
-    source = "tree";
+website \ {
+    source = "asset/app.html";
 
-    tree = load (source);
-
-    return source;
+    return tree;
 }

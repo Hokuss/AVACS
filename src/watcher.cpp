@@ -182,13 +182,27 @@ void request::vm_loop(){
         else if (a=="RET") return op_code::RET;
         else if (a=="JMP") return op_code::JMP;
         else if (a=="CJMP") return op_code::CJMP;
-        else if (a=="FILER") return op_code::RET;
+        else if (a=="FILER") return op_code::FILER;
         else if (a=="FILE") return op_code::FILE;
         else if (a=="PCH") return op_code::PCH;
         else return op_code::ER;
     };
 
+    auto reverse_helper = [](op_code code) -> std::string_view {
+        switch (code) {
+            case op_code::LOAD: return "LOAD";
+            case op_code::RET:  return "RET";  // Note: "FILER" also mapped to RET in forward helper
+            case op_code::JMP:  return "JMP";
+            case op_code::CJMP: return "CJMP";
+            case op_code::FILE: return "FILE";
+            case op_code::PCH:  return "PCH";
+            case op_code::FILER: return "FILER";
+            case op_code::ER:   
+            default:            return "ER";
+        }
+    };
     while(true && i<content.size()){
+        // std::cout<<i<<" "<<content[i]<<std::endl; 
         if(current==op_code::ER && content[i]==' '){
             std::string_view temp = std::string_view(content).substr(j, i-j);
             current = helper(temp);
@@ -215,9 +229,11 @@ void request::vm_loop(){
             }
             j=i+1;
             if(content[i]=='\n') {
+                std::cout<<reverse_helper(current)<<std::endl;
                 execute(); //execution code
                 j = pc;
                 i = pc-1;
+                current = op_code::ER;
             }
         } 
         i++;
@@ -251,6 +267,7 @@ void request::execute(){
         case op_code::PCH:
         {
             std::string cmp = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
+            std::cout<<cmp<<" "<<path<<std::endl;
             if (path==cmp) {
                 pc = 0;
                 for (size_t i = 0; i < activeregs[1].size(); ++i) {
