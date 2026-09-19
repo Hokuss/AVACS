@@ -1,4 +1,4 @@
 JMP 00000045
 LOAD R0,"asset/app.html"
 RET R0
-PCH \,00000013
+PCH \home,00000013

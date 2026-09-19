@@ -51,6 +51,8 @@ namespace {
     
     op_code current = op_code::ER;
     size_t pc = 0;
+    size_t i = 0, j = 0;
+    int k = 0;
 }
 compiler_context wx_compiler;
 
@@ -99,6 +101,7 @@ void request::parse_request(){
         BODY,
         ER
     };
+    // std::cout<<main<<std::endl;
     pos_type current = pos_type::METHOD;
     observer_ptr<const char> sptr, eptr, end;
 
@@ -144,6 +147,7 @@ void request::parse_request(){
                     eptr++;
                     sptr = eptr+1;
                     current = pos_type::BODY;
+                    break;
                 } else if (*eptr==':') {
                     temp_key = std::string_view(sptr, eptr - sptr);
                     sptr = eptr + 1;
@@ -152,7 +156,7 @@ void request::parse_request(){
                     while (sptr < end && *sptr == ' ') {
                         sptr++;
                     }
-                    eptr = sptr - 1; // Align scanner pointer
+                    eptr = sptr; // Align scanner pointer
                     current = pos_type::HEADER_VALUE;
                 }
                 break;
@@ -161,7 +165,8 @@ void request::parse_request(){
                 if (eptr + 1 < end && *eptr == '\r' && *(eptr + 1) == '\n') {
                     headers[temp_key] = std::string_view(sptr, eptr - sptr);
                     eptr++; // Consume '\r'
-                    sptr = eptr + 1;
+                    sptr = eptr + 2;
+                    eptr++;
                     current = pos_type::HEADER_KEY;
                 }
                 break;
@@ -174,8 +179,6 @@ void request::parse_request(){
 }
 
 void request::vm_loop(){
-    size_t i = 0, j = 0;
-    int k = 0;
 
     auto helper = [](std::string_view a){
         if(a=="LOAD") return op_code::LOAD;
@@ -226,6 +229,11 @@ void request::vm_loop(){
                     val >>= 8;
                 } while (val>0);
                 k++;
+            } else if (content[j]=='\\') {
+                activenum[k] = -1;
+                std::string temp = content.substr(j, i-j);
+                activeregs[k].clear();
+                activeregs[k++].assign(temp.begin(), temp.end());
             }
             j=i+1;
             if(content[i]=='\n') {
@@ -233,6 +241,7 @@ void request::vm_loop(){
                 execute(); //execution code
                 j = pc;
                 i = pc-1;
+                k = 0;
                 current = op_code::ER;
             }
         } 
@@ -267,18 +276,20 @@ void request::execute(){
         case op_code::PCH:
         {
             std::string cmp = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
-            std::cout<<cmp<<" "<<path<<std::endl;
             if (path==cmp) {
                 pc = 0;
                 for (size_t i = 0; i < activeregs[1].size(); ++i) {
                     pc |= static_cast<uint32_t>(activeregs[1][i]) << (8 * i);
                 }
+                break;
             }
+            pc = i+1;
             break;
         }
         case op_code::LOAD:
         {
             registers[activenum[0]] = activeregs[1];
+            pc = i+1;
             break;
         }
         case op_code::FILER:
@@ -286,12 +297,14 @@ void request::execute(){
             std::string temp = std::string(reinterpret_cast<const char*>(activeregs[0].data()),activeregs[0].size());
             std::string file = read_file(temp);
             registers[activenum[0]].assign(file.begin(), file.end());
+            pc = i+1;
             break;
         }
         case op_code::FILE:
         {
             std::string file = read_file(std::string(reinterpret_cast<const char*>(activeregs[1].data()), activeregs[1].size()));
             registers[activenum[1]].assign(file.begin(), file.end());
+            pc = i+1;
             break;
         }
         case op_code::CJMP:
