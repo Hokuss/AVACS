@@ -6,7 +6,6 @@ SO what i need is the explaination of the each type;
 4> standardize the tasks first. 
 
 Rules->
-No functions inside other functions. 
 Recursive calls to resolve everything. to maintain the readability.
 Website/Data/Logic functions are handled the same way. change at lexographic check for better way. 
 Register logic.
@@ -26,4 +25,4 @@ ADD r1,r2,r3
 
 Future Aspirations ->
 1> Do the decode and running parallely
-2> 
+2> functions inside other functions. 
