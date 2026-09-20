@@ -30,6 +30,7 @@ class request {
         std::string_view body;
         std::string ans;
         void vm_loop();
+        int ans_complete = 0;
 
     public:
         request() 

@@ -164,7 +164,10 @@ void compiler_context::bytecode(){
     }
     std::streampos finalpos = bytes.tellp();
     for(auto it:location){
-        bytes<<"PCH "<<it.first<<","<<toHex(it.second)<<"\n";
+        bytes<<"PCH "<<reverse_slash(it.first)<<","<<toHex(it.second)<<"\n";
+        if(reverse_slash(it.first)=="/home"){
+            bytes<<"PCH /,"<<toHex(it.second)<<"\n";
+        }
     }
     bytes.seekp(0);
     bytes<<"JMP "<<toHex(finalpos)<<"\n";

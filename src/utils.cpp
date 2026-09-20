@@ -6,12 +6,12 @@
 #include <algorithm>
 
 std::string read_file(fs::path pth){
+    // std::cout<<pth<<std::endl;
     std::ifstream file(pth, std::ios::in | std::ios::binary);
     if (!file.is_open()){
         std::cout<<pth.string() <<" - Path not found"<<std::endl;
         return "";
     }
-
     // Read the stream directly using stream iterators
     return std::string((std::istreambuf_iterator<char>(file)),
                         std::istreambuf_iterator<char>());
@@ -73,4 +73,23 @@ bool ilike_contains(std::string_view str, std::string_view pattern) noexcept {
     }
 
     return false;
+}
+
+std::string reverse_slash(std::string a){
+    std::string ans = a;
+    std::replace(ans.begin(), ans.end(), '\\', '/');
+    return ans;
+}
+
+std::ostream& operator<<(std::ostream& os, const std::vector<uint8_t>& vec) {
+    os << "[";
+    for (size_t i = 0; i < vec.size(); ++i) {
+        // Cast uint8_t (unsigned char) to int so it prints as a number, not an ASCII character
+        os << static_cast<int>(vec[i]);
+        if (i + 1 < vec.size()) {
+            os << ", ";
+        }
+    }
+    os << "]";
+    return os;
 }

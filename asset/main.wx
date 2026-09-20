@@ -1,5 +1,5 @@
 website \home {
     source = "asset/app.html";
-
+    tree = load(source);
     return tree;
 }

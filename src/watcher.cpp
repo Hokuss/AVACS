@@ -194,7 +194,7 @@ void request::vm_loop(){
     auto reverse_helper = [](op_code code) -> std::string_view {
         switch (code) {
             case op_code::LOAD: return "LOAD";
-            case op_code::RET:  return "RET";  // Note: "FILER" also mapped to RET in forward helper
+            case op_code::RET:  return "RET"; 
             case op_code::JMP:  return "JMP";
             case op_code::CJMP: return "CJMP";
             case op_code::FILE: return "FILE";
@@ -212,11 +212,12 @@ void request::vm_loop(){
             j=i+1;
         } else if (content[i]==',' | content[i]=='\n') {
             if(content[j]=='R'){
-                int regnum = std::stoi(content.substr(j+1, i-j));
+                int regnum = std::stoi(content.substr(j+1, i-j-1));
+                // std::cout<<regnum<<std::endl;
                 activenum[k] = regnum;
                 activeregs[k++] = registers[regnum];
             } else if (content[j]=='"') {
-                std::string_view temp = std::string_view(content).substr(j+1,i-j-1);
+                std::string_view temp = std::string_view(content).substr(j+1,i-j-2);
                 activenum[k] = -1;
                 activeregs[k++].assign(temp.begin(), temp.end());
             } else if (std::isdigit(content[j])) {
@@ -229,7 +230,7 @@ void request::vm_loop(){
                     val >>= 8;
                 } while (val>0);
                 k++;
-            } else if (content[j]=='\\') {
+            } else if (content[j]=='\\' | content[j]=='/') {
                 activenum[k] = -1;
                 std::string temp = content.substr(j, i-j);
                 activeregs[k].clear();
@@ -237,8 +238,9 @@ void request::vm_loop(){
             }
             j=i+1;
             if(content[i]=='\n') {
-                std::cout<<reverse_helper(current)<<std::endl;
+                // std::cout<<reverse_helper(current)<<std::endl;
                 execute(); //execution code
+                if(ans_complete==1) return;
                 j = pc;
                 i = pc-1;
                 k = 0;
@@ -249,20 +251,14 @@ void request::vm_loop(){
     }
 }
 
-std::string request::process(){
-    parse_request();
-    if(extra.joinable()){
-        extra.join();
-        vm_loop();
-    }
-    return ans;
-}
-
 void request::execute(){
     switch (current) {
         case op_code::RET:
         {
             ans = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
+            // std::cout<<activeregs[0];
+            // std::cout<<ans<<std::endl;
+            ans_complete = 1;
             break;
         }
         case op_code::JMP:
@@ -276,11 +272,13 @@ void request::execute(){
         case op_code::PCH:
         {
             std::string cmp = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
+            // std::cout<<cmp<<" "<<path<<std::endl;
             if (path==cmp) {
                 pc = 0;
                 for (size_t i = 0; i < activeregs[1].size(); ++i) {
                     pc |= static_cast<uint32_t>(activeregs[1][i]) << (8 * i);
                 }
+                // std::cout<<pc<<std::endl;
                 break;
             }
             pc = i+1;
@@ -303,7 +301,9 @@ void request::execute(){
         case op_code::FILE:
         {
             std::string file = read_file(std::string(reinterpret_cast<const char*>(activeregs[1].data()), activeregs[1].size()));
-            registers[activenum[1]].assign(file.begin(), file.end());
+            registers[activenum[0]].assign(file.begin(), file.end());
+            // std::cout<<registers[activenum[0]];
+            // std::cout<<std::endl<<activenum[0]<<std::endl;
             pc = i+1;
             break;
         }
@@ -314,4 +314,16 @@ void request::execute(){
         default:
             return;
     }
+}
+
+std::string request::process(){
+    parse_request();
+    if(extra.joinable()){
+        extra.join();
+        vm_loop();
+    }
+    // std::cout<<ans<<std::endl;
+
+    //wrap ans in proper http response
+    return ans;
 }
