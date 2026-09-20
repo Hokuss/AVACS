@@ -339,7 +339,7 @@ std::string request::wrap_http_response(const std::string& content_type,
     response << "Content-Type: " << content_type << "\r\n";
     response << "Content-Length: " << body.size() << "\r\n";
     response << "Connection: close\r\n"; // Closes connection after sending
-    response << "Server: Custom-VM-Engine/1.0\r\n";
+    response << "Server: AVACS-Engine/0.1\r\n";
 
     // 3. Header-Body Separator (Blank line / CRLF)
     response << "\r\n";

@@ -1,1 +1,625 @@
-<b> hello world </b>
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gyanam Modi | Business Associate & Software Developer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: JetBrains Mono & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            accent: '#38bdf8',
+                            purple: '#a855f7',
+                            dark: '#0a0d14',
+                            card: '#111726',
+                            border: '#1f293d'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #0a0d14;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0d14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #14b8a6;
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 25px -5px rgba(20, 184, 166, 0.25);
+        }
+        .glow-effect-purple {
+            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.25);
+        }
+        .glass-panel {
+            background: rgba(17, 23, 38, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .code-bg {
+            background-image: radial-gradient(rgba(20, 184, 166, 0.1) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="selection:bg-brand-500 selection:text-black relative">
+
+    <!-- Matrix / Canvas Background -->
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-20"></canvas>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-brand-border/50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="#hero" class="font-mono text-xl font-bold tracking-wider text-white flex items-center gap-2 group">
+                <span class="text-brand-500 group-hover:text-brand-accent transition-colors">&lt;</span>
+                <span>GyanamModi</span>
+                <span class="text-brand-500 group-hover:text-brand-accent transition-colors">/&gt;</span>
+            </a>
+            
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center space-x-8 font-mono text-sm">
+                <a href="#about" class="text-slate-300 hover:text-brand-500 transition-colors flex items-center gap-1">
+                    <span class="text-brand-500 text-xs">01.</span> About
+                </a>
+                <a href="#skills" class="text-slate-300 hover:text-brand-500 transition-colors flex items-center gap-1">
+                    <span class="text-brand-500 text-xs">02.</span> Skills
+                </a>
+                <a href="#projects" class="text-slate-300 hover:text-brand-500 transition-colors flex items-center gap-1">
+                    <span class="text-brand-500 text-xs">03.</span> Projects
+                </a>
+                <a href="#contact" class="text-slate-300 hover:text-brand-500 transition-colors flex items-center gap-1">
+                    <span class="text-brand-500 text-xs">04.</span> Contact
+                </a>
+                <a href="#contact" class="px-4 py-2 border border-brand-500/50 hover:border-brand-500 text-brand-500 hover:bg-brand-500/10 rounded-lg transition-all shadow-sm font-sans font-medium text-xs">
+                    Get In Touch
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-slate-300 hover:text-white focus:outline-none" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="hidden md:hidden glass-panel border-b border-brand-border px-6 py-4 flex-col space-y-4 font-mono text-sm">
+            <a href="#about" class="mobile-link text-slate-300 hover:text-brand-500 transition-colors">01. About</a>
+            <a href="#skills" class="mobile-link text-slate-300 hover:text-brand-500 transition-colors">02. Skills</a>
+            <a href="#projects" class="mobile-link text-slate-300 hover:text-brand-500 transition-colors">03. Projects</a>
+            <a href="#contact" class="mobile-link text-slate-300 hover:text-brand-500 transition-colors">04. Contact</a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="relative z-10 max-w-7xl mx-auto px-6 pt-24">
+
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-[85vh] flex flex-col justify-center items-start relative code-bg py-12">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-500/10 border border-brand-500/30 text-brand-500 font-mono text-xs mb-6 animate-pulse-slow">
+                <span class="w-2 h-2 rounded-full bg-brand-500"></span> Available for Data Analyst, Backend Developer and wxdefrc
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight mb-4">
+                Hi, I'm <span class="bg-gradient-to-r from-brand-500 via-brand-accent to-brand-purple bg-clip-text text-transparent">Gyanam Modi</span>
+            </h1>
+
+            <h2 class="text-2xl sm:text-4xl font-bold text-slate-400 mb-6">
+                Data Analyst and Software Developer
+            </h2>
+
+            <p class="max-w-2xl text-slate-400 text-base sm:text-lg leading-relaxed mb-8">
+                Crafting high-performance software with <span class="text-slate-200 font-semibold">Modern C++</span>, and data analysis using Snowflake and Tableau.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="#projects" class="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-slate-950 font-semibold rounded-lg transition-all glow-effect flex items-center gap-2">
+                    <i class="fa-solid fa-code"></i> View My Work
+                </a>
+                <a href="https://github.com/Hokuss" target="_blank" rel="noopener noreferrer" class="px-6 py-3 glass-panel hover:bg-slate-800/60 text-slate-200 border border-brand-border rounded-lg transition-all flex items-center gap-2">
+                    <i class="fa-brands fa-github text-lg"></i> GitHub Profile
+                </a>
+            </div>
+
+            <!-- Terminal Widget Decorative Element -->
+            <div class="mt-12 w-full max-w-2xl rounded-xl glass-panel border border-brand-border overflow-hidden text-xs font-mono shadow-2xl">
+                <div class="bg-slate-900/90 px-4 py-2.5 flex items-center justify-between border-b border-brand-border">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500/80 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500/80 inline-block"></span>
+                    </div>
+                    <span class="text-slate-500">gyanam@dev-environment:~</span>
+                </div>
+                <div class="p-4 space-y-2 text-slate-300">
+                    <p class="flex items-center gap-2">
+                        <span class="text-brand-500">$</span> g++ -std=c++26 main.cpp -lGL -lglfw -lGLEW -o renderer
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <span class="text-brand-500">$</span> ./back-end --debug-hooks
+                    </p>
+                    <p class="text-emerald-400 font-mono">
+                        [INFO] AVACS - Backend v0.1 Loaded. <br>
+                        [INFO] Bounded with DBMS warehouse!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="py-24 border-t border-brand-border/40">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white font-mono flex items-center gap-2">
+                    <span class="text-brand-500">01.</span> About Me
+                </h2>
+                <div class="h-px bg-brand-border flex-1 max-w-xs"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+                <div class="md:col-span-7 space-y-5 text-slate-300 text-base leading-relaxed">
+                    <p>
+                        Hello! I'm <span class="text-brand-500 font-semibold">Gyanam Modi</span>, a software engineer deeply passionate about low-level programming, data warehousing, and AI Agent harnesses. I thrive on understanding how software interacts with hardware at the lowest levels.
+                    </p>
+                    <p>
+                        My core journey revolves around modern <span class="text-white font-mono font-medium bg-slate-800/70 px-1.5 py-0.5 rounded">C++ (C++17/26)</span>, crafting my own backend for Websites and AI harness for my projects.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3 font-mono text-xs">
+                        <div class="px-3 py-1.5 rounded glass-panel border border-brand-500/20 text-brand-300">
+                            ⚡ AI Harness
+                        </div>
+                        <div class="px-3 py-1.5 rounded glass-panel border border-brand-accent/20 text-sky-300">
+                            ⚙️ Native C++ Development
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-5 flex justify-center">
+                    <div class="relative group max-w-xs w-full">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-500 to-brand-purple rounded-2xl blur opacity-30 group-hover:opacity-75 transition duration-500"></div>
+                        <div class="relative glass-panel rounded-2xl p-6 border border-brand-border text-center space-y-4">
+                            <div class="w-28 h-28 mx-auto rounded-full bg-gradient-to-tr from-brand-600 to-brand-purple p-1 shadow-lg">
+                                <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-4xl text-brand-500">
+                                    <i class="fa-solid fa-terminal"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">Gyanam Modi</h3>
+                                <p class="text-xs font-mono text-brand-500">Software Developer</p>
+                            </div>
+                            <div class="text-xs text-slate-400 space-y-1 font-mono border-t border-brand-border/60 pt-3">
+                                <p>📍 Location: Global / Remote</p>
+                                <p>💻 Main Stack: C++, Python, CMake</p>
+                                <p>🔒 Focus: AI and Backend</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-24 border-t border-brand-border/40">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white font-mono flex items-center gap-2">
+                    <span class="text-brand-500">02.</span> Skills & Technical Competencies
+                </h2>
+                <div class="h-px bg-brand-border flex-1 max-w-xs"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                
+                <!-- Skill Card 1 -->
+                <div class="glass-panel p-6 rounded-xl border border-brand-border hover:border-brand-500/50 transition-all hover:-translate-y-1 group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-code text-brand-500"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Modern C++</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-4">
+                        RAII, Smart Pointers, STL algorithms, Templates, Multithreading, C++17/C++26 standards, Memory Optimization.
+                    </p>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-brand-500 h-full w-[90%] rounded-full"></div>
+                    </div>
+                </div>
+
+                <!-- Skill Card 3 -->
+                <div class="glass-panel p-6 rounded-xl border border-brand-border hover:border-brand-500/50 transition-all hover:-translate-y-1 group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-window-restore"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">AI Agents</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-4">
+                        Python API Calls, C++ File Scanner, Agentic Tools.
+                    </p>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-purple-500 h-full w-[88%] rounded-full"></div>
+                    </div>
+                </div>
+
+                <!-- Skill Card 5 -->
+                <div class="glass-panel p-6 rounded-xl border border-brand-border hover:border-brand-500/50 transition-all hover:-translate-y-1 group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-terminal"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">MSYS2 & Toolchains</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-4">
+                        MinGW64, GCC/Clang, CMake build configurations, cross-platform dependencies, package management.
+                    </p>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-amber-500 h-full w-[85%] rounded-full"></div>
+                    </div>
+                </div>
+
+                <!-- Skill Card 6 -->
+                <div class="glass-panel p-6 rounded-xl border border-brand-border hover:border-brand-500/50 transition-all hover:-translate-y-1 group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Web Technologies</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-4">
+                        HTML5, CSS3, Tailwind CSS, JavaScript ES6+, WebGL basics, responsive portfolio & tooling interfaces.
+                    </p>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-rose-500 h-full w-[78%] rounded-full"></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-24 border-t border-brand-border/40">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white font-mono flex items-center gap-2">
+                        <span class="text-brand-500">03.</span> Projects Showcase
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">A collection of custom engines, debuggers, and interactive software.</p>
+                </div>
+                
+                <!-- Filter Buttons -->
+                <div id="project-filters" class="flex flex-wrap gap-2 font-mono text-xs">
+                    <button data-filter="all" class="filter-btn active px-3 py-1.5 rounded-lg bg-brand-500 text-slate-950 font-bold transition-all">All</button>
+                    <button data-filter="Backend" class="filter-btn px-3 py-1.5 rounded-lg glass-panel hover:border-brand-500 text-slate-300 transition-all">Backend</button>
+                    <button data-filter="AI" class="filter-btn px-3 py-1.5 rounded-lg glass-panel hover:border-brand-500 text-slate-300 transition-all">AI</button>
+                    <button data-filter="others" class="filter-btn px-3 py-1.5 rounded-lg glass-panel hover:border-brand-500 text-slate-300 transition-all">Others</button>
+                </div>
+            </div>
+
+            <!-- Projects Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <!-- Project 1 -->
+                <div class="project-card glass-panel rounded-xl border border-brand-border overflow-hidden hover:border-brand-500/50 transition-all hover:-translate-y-1 flex flex-col justify-between" data-category="Backend">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono text-brand-500 bg-brand-500/10 px-2.5 py-1 rounded-full border border-brand-500/20">AVACS Engine</span>
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <a href="https://github.com/Hokuss/AVACS" target="_blank" class="hover:text-white transition-colors" title="View Code"><i class="fa-brands fa-github text-lg"></i></a>
+                                <a href="https://github.com/Hokuss/AVACS" class="hover:text-white transition-colors" title="Demo Video"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></a>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2 hover:text-brand-500 transition-colors">AVACS</h3>
+                        <p class="text-slate-400 text-sm mb-4 leading-relaxed">
+                            A high-performance backend engine written in C++, featuring built-in warehouse connectivity and a custom compiler and virtual machine for a self-developed WebX scripting language. The system is designed to accelerate backend development by combining native C++ performance with a purpose-built scripting environment and runtime.
+                        </p>
+                    </div>
+                    <div class="px-6 pb-6 pt-0">
+                        <div class="flex flex-wrap gap-2 font-mono text-[11px] text-slate-300">
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">C++26</span>
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Red-Green Tree</span>
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">VM</span>
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">HTML 5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-card glass-panel rounded-xl border border-brand-border overflow-hidden hover:border-brand-500/50 transition-all hover:-translate-y-1 flex flex-col justify-between" data-category="AI">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">AI Harness</span>
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <a href="https://github.com/Hokuss/Harness" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-github text-lg"></i></a>
+                                <a href="https://github.com/Hokuss/Harness" class="hover:text-white transition-colors"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></a>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2 hover:text-brand-purple transition-colors">AI Agent</h3>
+                        <p class="text-slate-400 text-sm mb-4 leading-relaxed">
+                            Lightweight agentic tools built on a knowledge-tree architecture, combining structured information retrieval with LLM API calls to enable efficient reasoning, context management, and task automation.
+                        </p>
+                    </div>
+                    <div class="px-6 pb-6 pt-0">
+                        <div class="flex flex-wrap gap-2 font-mono text-[11px] text-slate-300">
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">C++</span>
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Python</span>
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">AI Harness</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="project-card glass-panel rounded-xl border border-brand-border overflow-hidden hover:border-brand-500/50 transition-all hover:-translate-y-1 flex flex-col justify-between" data-category="Backend">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">Data-Warehousing</span>
+                            <div class="flex items-center gap-3 text-slate-400">
+                                <a href="https://github.com/Hokuss/dbms" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-github text-lg"></i></a>
+                                <a href="https://github.com/Hokuss/dbms" class="hover:text-white transition-colors"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></a>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2 hover:text-emerald-400 transition-colors">DBMS</h3>
+                        <p class="text-slate-400 text-sm mb-4 leading-relaxed">
+                            A ultra-minimal, high-performance C++ DBMS designed for local storage. This engine utilizes a multi-threaded architecture to ensure data operations never block the main application or UI thread.
+                        </p>
+                    </div>
+                    <div class="px-6 pb-6 pt-0">
+                        <div class="flex flex-wrap gap-2 font-mono text-[11px] text-slate-300">
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">C++</span>
+                            <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700">Data Warehouse</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 border-t border-brand-border/40">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl sm:text-4xl font-bold text-white font-mono mb-3">
+                        <span class="text-brand-500">04.</span> Get In Touch
+                    </h2>
+                    <p class="text-slate-400 text-base max-w-lg mx-auto">
+                        Whether you want to discuss C++ optimization, AI, or Data Analysis and Visualization my inbox is always open.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- Contact Info Links -->
+                    <div class="md:col-span-5 space-y-6">
+                        <div class="glass-panel p-6 rounded-xl border border-brand-border space-y-6">
+                            <h3 class="text-lg font-bold text-white border-b border-brand-border pb-3">Contact Details</h3>
+                            
+                            <a href="mailto:gyanammodi01@gmail.com" class="flex items-center gap-4 text-slate-300 hover:text-brand-500 transition-colors group">
+                                <div class="w-10 h-10 rounded-lg bg-brand-500/10 text-brand-500 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-mono text-slate-500">Email Me</p>
+                                    <p class="text-sm font-medium">gyanammodi01@gmail.com</p>
+                                </div>
+                            </a>
+
+                            <a href="https://github.com/Hokuss" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 text-slate-300 hover:text-brand-500 transition-colors group">
+                                <div class="w-10 h-10 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-brands fa-github"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-mono text-slate-500">GitHub</p>
+                                    <p class="text-sm font-medium">github.com/Hokuss</p>
+                                </div>
+                            </a>
+
+                            <a href="https://www.linkedin.com/in/gyanam-modi" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 text-slate-300 hover:text-brand-500 transition-colors group">
+                                <div class="w-10 h-10 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                                    <i class="fa-brands fa-linkedin-in"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-mono text-slate-500">LinkedIn</p>
+                                    <p class="text-sm font-medium">linkedin.com/in/gyanam-modi</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Form -->
+                    <div class="md:col-span-7">
+                        <form id="contact-form" class="glass-panel p-6 sm:p-8 rounded-xl border border-brand-border space-y-4">
+                            <div>
+                                <label for="name" class="block text-xs font-mono text-slate-400 mb-2">YOUR NAME</label>
+                                <input type="text" id="name" required placeholder="John Doe" class="w-full bg-slate-900/80 border border-brand-border rounded-lg px-4 py-3 text-slate-200 focus:outline-none focus:border-brand-500 transition-colors text-sm">
+                            </div>
+
+                            <div>
+                                <label for="email" class="block text-xs font-mono text-slate-400 mb-2">YOUR EMAIL</label>
+                                <input type="email" id="email" required placeholder="john@example.com" class="w-full bg-slate-900/80 border border-brand-border rounded-lg px-4 py-3 text-slate-200 focus:outline-none focus:border-brand-500 transition-colors text-sm">
+                            </div>
+
+                            <div>
+                                <label for="message" class="block text-xs font-mono text-slate-400 mb-2">MESSAGE</label>
+                                <textarea id="message" rows="4" required placeholder="Hello Gyanam, I'd like to talk about a potential project..." class="w-full bg-slate-900/80 border border-brand-border rounded-lg px-4 py-3 text-slate-200 focus:outline-none focus:border-brand-500 transition-colors text-sm resize-none"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full py-3 bg-brand-500 hover:bg-brand-600 text-slate-950 font-bold rounded-lg transition-all glow-effect flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> Send Message
+                            </button>
+                        </form>
+
+                        <!-- Form Feedback Box -->
+                        <div id="form-feedback" class="hidden mt-4 p-4 rounded-lg text-sm font-mono text-center"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-brand-border/60 py-8 text-center text-xs text-slate-500 font-mono">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>Designed & Developed by Gyanam Modi</p>
+            <p class="text-slate-600">Built with Modern C++ Mindset & Web Tech</p>
+        </div>
+    </footer>
+
+    <script>
+        // 1. Interactive Animated Grid / Particle Canvas
+        const canvas = id => document.getElementById(id);
+        const cvs = canvas('bg-canvas');
+        const ctx = cvs.getContext('2d');
+
+        function resizeCanvas() {
+            cvs.width = window.innerWidth;
+            cvs.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const dots = Array.from({ length: 45 }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            radius: Math.random() * 2 + 1
+        }));
+
+        function drawBackground() {
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            ctx.fillStyle = '#14b8a6';
+            ctx.strokeStyle = 'rgba(20, 184, 166, 0.15)';
+
+            for (let i = 0; i < dots.length; i++) {
+                let d = dots[i];
+                d.x += d.vx;
+                d.y += d.vy;
+
+                if (d.x < 0 || d.x > cvs.width) d.vx *= -1;
+                if (d.y < 0 || d.y > cvs.height) d.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                for (let j = i + 1; j < dots.length; j++) {
+                    let d2 = dots[j];
+                    let dist = Math.hypot(d.x - d2.x, d.y - d2.y);
+                    if (dist < 130) {
+                        ctx.beginPath();
+                        ctx.moveTo(d.x, d.y);
+                        ctx.lineTo(d2.x, d2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(drawBackground);
+        }
+        drawBackground();
+
+        // 2. Mobile Nav Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            });
+        });
+
+        // 3. Project Filter Logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const projectCards = document.querySelectorAll('.project-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-brand-500', 'text-slate-950', 'font-bold');
+                    b.classList.add('glass-panel', 'text-slate-300');
+                });
+                btn.classList.add('active', 'bg-brand-500', 'text-slate-950', 'font-bold');
+                btn.classList.remove('glass-panel', 'text-slate-300');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                projectCards.forEach(card => {
+                    const categories = card.getAttribute('data-category');
+                    if (filterValue === 'all' || categories.includes(filterValue)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // 4. Contact Form Submission Handling
+        const contactForm = document.getElementById('contact-form');
+        const feedback = document.getElementById('form-feedback');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            feedback.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/20');
+            feedback.classList.add('bg-brand-500/10', 'text-brand-400', 'border', 'border-brand-500/30');
+            feedback.textContent = '🚀 Message dispatched successfully! Thank you for contacting Gyanam.';
+            
+            contactForm.reset();
+
+            setTimeout(() => {
+                feedback.classList.add('hidden');
+            }, 6000);
+        });
+    </script>
+</body>
+</html>
