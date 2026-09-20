@@ -5,6 +5,8 @@
 #include <string_view>
 #include <thread>
 #include <unordered_map>
+#include <cstdint>
+#include <vector>
 
 void loop(std::stop_token stop, std::string main);
 
@@ -30,14 +32,18 @@ class request {
         std::string_view body;
         std::string ans;
         void vm_loop();
-        int ans_complete = 0;
+        std::string wrap_http_response(const std::string& content_type, 
+                               const std::string& body);
+
+        std::string wrap_http_response(const std::string& content_type, 
+                               const std::vector<uint8_t>& body);
 
     public:
         request() 
             : extra(&request::reader, this) 
         {
         }
-
+        int status_code = 500;
         std::string_view main;
         std::string process();
 };

@@ -3,7 +3,6 @@
 #include "utils.hpp"
 #include <chrono>
 #include <cstddef>
-#include <cstdint>
 #include <map>
 #include <filesystem>
 #include <iostream>
@@ -12,7 +11,6 @@
 #include <string>
 #include <string_view>
 #include <thread>
-#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -240,7 +238,7 @@ void request::vm_loop(){
             if(content[i]=='\n') {
                 // std::cout<<reverse_helper(current)<<std::endl;
                 execute(); //execution code
-                if(ans_complete==1) return;
+                if(status_code!=500) return;
                 j = pc;
                 i = pc-1;
                 k = 0;
@@ -258,7 +256,7 @@ void request::execute(){
             ans = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
             // std::cout<<activeregs[0];
             // std::cout<<ans<<std::endl;
-            ans_complete = 1;
+            status_code = 200;
             break;
         }
         case op_code::JMP:
@@ -316,14 +314,58 @@ void request::execute(){
     }
 }
 
+std::string get_status_message(int status_code) {
+    switch (status_code) {
+        case 200: return "OK";
+        case 201: return "Created";
+        case 204: return "No Content";
+        case 400: return "Bad Request";
+        case 403: return "Forbidden";
+        case 404: return "Not Found";
+        case 500: return "Internal Server Error";
+        default:  return "OK";
+    }
+}
+
+// Function to construct a full HTTP/1.1 response from binary VM output
+std::string request::wrap_http_response(const std::string& content_type, 
+                               const std::vector<uint8_t>& body) {
+    std::ostringstream response;
+
+    // 1. Status Line (HTTP-Version SP Status-Code SP Reason-Phrase CRLF)
+    response << "HTTP/1.1 " << status_code << " " << get_status_message(status_code) << "\r\n";
+
+    // 2. HTTP Headers
+    response << "Content-Type: " << content_type << "\r\n";
+    response << "Content-Length: " << body.size() << "\r\n";
+    response << "Connection: close\r\n"; // Closes connection after sending
+    response << "Server: Custom-VM-Engine/1.0\r\n";
+
+    // 3. Header-Body Separator (Blank line / CRLF)
+    response << "\r\n";
+
+    // 4. Append Body
+    std::string http_string = response.str();
+    http_string.insert(http_string.end(), body.begin(), body.end());
+
+    return http_string;
+}
+
+// Overload for plain std::string payloads (HTML, JSON, Plain Text)
+std::string request::wrap_http_response(const std::string& content_type, 
+                               const std::string& body) {
+    std::vector<uint8_t> body_bytes(body.begin(), body.end());
+    return wrap_http_response(content_type, body_bytes);
+}
+
 std::string request::process(){
     parse_request();
     if(extra.joinable()){
         extra.join();
         vm_loop();
     }
+    std::string ct = "text/html; charset=utf-8";
     // std::cout<<ans<<std::endl;
-
     //wrap ans in proper http response
-    return ans;
+    return wrap_http_response(ct, ans);
 }
