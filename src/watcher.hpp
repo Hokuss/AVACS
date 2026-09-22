@@ -31,12 +31,11 @@ class request {
         std::unordered_map<std::string_view, std::string_view> headers;
         std::string_view body;
         std::string ans;
+        std::string ct;
         void vm_loop();
-        std::string wrap_http_response(const std::string& content_type, 
-                               const std::string& body);
+        std::string wrap_http_response();
 
-        std::string wrap_http_response(const std::string& content_type, 
-                               const std::vector<uint8_t>& body);
+        std::string wrap_http_response(const std::vector<uint8_t>& body);
 
     public:
         request() 

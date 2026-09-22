@@ -43,6 +43,9 @@ namespace {
         //Final return Statement
         RET,
 
+        //type setter
+        CTH,
+
         //Reduntant
         ER
     };
@@ -186,6 +189,7 @@ void request::vm_loop(){
         else if (a=="FILER") return op_code::FILER;
         else if (a=="FILE") return op_code::FILE;
         else if (a=="PCH") return op_code::PCH;
+        else if (a=="CTH") return op_code::CTH;
         else return op_code::ER;
     };
 
@@ -198,6 +202,7 @@ void request::vm_loop(){
             case op_code::FILE: return "FILE";
             case op_code::PCH:  return "PCH";
             case op_code::FILER: return "FILER";
+            case op_code::CTH: return "CTH";
             case op_code::ER:   
             default:            return "ER";
         }
@@ -257,6 +262,12 @@ void request::execute(){
             // std::cout<<activeregs[0];
             // std::cout<<ans<<std::endl;
             status_code = 200;
+            break;
+        }
+        case op_code::CTH:
+        {
+            ct = std::string(reinterpret_cast<const char*>(activeregs[0].data()), activeregs[0].size());
+            pc = i+1;
             break;
         }
         case op_code::JMP:
@@ -328,15 +339,14 @@ std::string get_status_message(int status_code) {
 }
 
 // Function to construct a full HTTP/1.1 response from binary VM output
-std::string request::wrap_http_response(const std::string& content_type, 
-                               const std::vector<uint8_t>& body) {
+std::string request::wrap_http_response(const std::vector<uint8_t>& body) {
     std::ostringstream response;
 
     // 1. Status Line (HTTP-Version SP Status-Code SP Reason-Phrase CRLF)
     response << "HTTP/1.1 " << status_code << " " << get_status_message(status_code) << "\r\n";
 
     // 2. HTTP Headers
-    response << "Content-Type: " << content_type << "\r\n";
+    response << "Content-Type: " << ct << "\r\n";
     response << "Content-Length: " << body.size() << "\r\n";
     response << "Connection: close\r\n"; // Closes connection after sending
     response << "Server: AVACS-Engine/0.1\r\n";
@@ -352,10 +362,9 @@ std::string request::wrap_http_response(const std::string& content_type,
 }
 
 // Overload for plain std::string payloads (HTML, JSON, Plain Text)
-std::string request::wrap_http_response(const std::string& content_type, 
-                               const std::string& body) {
-    std::vector<uint8_t> body_bytes(body.begin(), body.end());
-    return wrap_http_response(content_type, body_bytes);
+std::string request::wrap_http_response() {
+    std::vector<uint8_t> body_bytes(ans.begin(), ans.end());
+    return wrap_http_response(body_bytes);
 }
 
 std::string request::process(){
@@ -364,8 +373,7 @@ std::string request::process(){
         extra.join();
         vm_loop();
     }
-    std::string ct = "text/html; charset=utf-8";
     // std::cout<<ans<<std::endl;
     //wrap ans in proper http response
-    return wrap_http_response(ct, ans);
+    return wrap_http_response();
 }

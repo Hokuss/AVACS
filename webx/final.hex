@@ -1,4 +1,5 @@
-JMP 00000056
+JMP 00000087
+CTH "text/html; charset=utf-8"
 LOAD R0,"asset/app.html"
 FILE R1,R0
 RET R1

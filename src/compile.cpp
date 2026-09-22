@@ -144,6 +144,7 @@ void compiler_context::bytecode(){
             for(auto per: it-> green -> child){
                 switch (per->syntax) {
                     case grammar::PATH: location[std::string(per->look)] = bytes.tellp();
+                        bytes<<"CTH \"text/html; charset=utf-8\"\n";
                         break;
                     case grammar::ASSIGNMENT: 
                         bytes<<resolve_assignment(per);
