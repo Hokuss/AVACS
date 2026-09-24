@@ -1,7 +1,11 @@
-JMP 00000087
+JMP 00000159
 CTH "text/html; charset=utf-8"
-LOAD R0,"asset/app.html"
+LOAD R0,"asset/alt.html"
 FILE R1,R0
 RET R1
-PCH /home,00000013
-PCH /,00000013
+CTH "text/css; charset=utf-8"
+LOAD R0,"asset/style.css"
+FILER R0
+RET R0
+PCH /style,00000087
+PCH /alt,00000013

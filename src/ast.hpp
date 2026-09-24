@@ -16,11 +16,14 @@ enum class grammar {
     WHITE_SPACE, EOL, IDENTIFIER, STRING, EOS,
     OPEN_BRACE, CLOSE_BRACE, EQUAL, OPEN_BRACKET, CLOSE_BRACKET, EF,
     ADD, SUBTRACT, MULTIPLY, DIVIDE,
-    PATH, WEB, DATA, LOGIC, INCLUDE,
-    LOAD, UPDATE, ASSERT, RETURN, 
+    PATH, WEB, DATA, LOGIC, STYLE,
+    INCLUDE, LOAD, UPDATE, ASSERT, RETURN, 
     
     // Complex Structural Nodes
-    WEBSITE_BLOCK, DATA_BLOCK, LOGIC_BLOCK, ASSIGNMENT, INCLUDE_BLOCK, LOAD_BLOCK, UPDATE_BLOCK, ASSERT_BLOCK, RETURN_BLOCK
+    WEBSITE_BLOCK, DATA_BLOCK, LOGIC_BLOCK, ASSIGNMENT, INCLUDE_BLOCK, LOAD_BLOCK, UPDATE_BLOCK, 
+    ASSERT_BLOCK, 
+    RETURN_BLOCK,
+    STYLE_BLOCK
 };
 
 struct symbol{
@@ -81,6 +84,7 @@ class ast{
         std::shared_ptr<green_node> next_leaf();
         std::shared_ptr<green_node> web_block();
         std::shared_ptr<green_node> data_block();
+        std::shared_ptr<green_node> style_block();
         // std::shared_ptr<green_node> logic_block();
         std::shared_ptr<green_node> assignment_block();
         std::shared_ptr<green_node> include_block();

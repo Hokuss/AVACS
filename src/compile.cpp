@@ -161,6 +161,28 @@ void compiler_context::bytecode(){
                 }
             }
             pop_scope();
+        } else if (it->green->syntax==grammar::STYLE_BLOCK){
+            add_scope();
+            for(auto per: it-> green -> child){
+                switch (per->syntax) {
+                    case grammar::PATH: location[std::string(per->look)] = bytes.tellp();
+                        bytes<<"CTH \"text/css; charset=utf-8\"\n";
+                        break;
+                    case grammar::ASSIGNMENT: 
+                        bytes<<resolve_assignment(per);
+                        break;
+                    case grammar::LOAD_BLOCK:
+                        bytes<<resolve_load(per);
+                        break;
+                    case grammar::RETURN_BLOCK:
+                        bytes<<"RET R"<<pos[std::string(per->child[2]->look)]<<"\n";
+                        break;
+                    default: 
+                        break;
+                        
+                }
+            }
+            pop_scope();
         }
     }
     std::streampos finalpos = bytes.tellp();

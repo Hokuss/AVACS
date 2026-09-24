@@ -11,10 +11,10 @@ Website/Data/Logic functions are handled the same way. change at lexographic che
 Register logic.
 
 Website -> returns html
-Style -> internal stitched it inside the html block automatically (automatic maybe later)
+Style -> CSS. internal stitched it inside the html block automatically (automatic maybe later)
 Update -> updates the data
 Upload -> Upload the data
-Load -> returns the data
+Download -> returns the data
 
 
 

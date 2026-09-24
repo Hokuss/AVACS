@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gyanam Modi | Software Developer & Graphics Programmer</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS Link -->
+    <link rel="stylesheet" href="/style">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#hero" class="logo">
+                <span class="logo-tag">&lt;</span>GyanamModi<span class="logo-tag">/&gt;</span>
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#about"><span class="nav-num">01.</span> About</a></li>
+                    <li><a href="#skills"><span class="nav-num">02.</span> Skills</a></li>
+                    <li><a href="#projects"><span class="nav-num">03.</span> Projects</a></li>
+                    <li><a href="#contact"><span class="nav-num">04.</span> Contact</a></li>
+                    <li><a href="#contact" class="btn-nav">Get In Touch</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <div class="status-badge">
+                <span class="status-dot"></span> Available for Systems & Graphics Projects
+            </div>
+
+            <h1 class="hero-title">
+                Hi, I'm <span class="text-gradient">Gyanam Modi</span>
+            </h1>
+
+            <h2 class="hero-subtitle">
+                Software Developer & Graphics Programmer
+            </h2>
+
+            <p class="hero-description">
+                Crafting high-performance applications with <span class="highlight">Modern C++</span>, real-time rendering engines using <span class="highlight">OpenGL & ImGui</span>, and exploring system-level security with reverse engineering techniques.
+            </p>
+
+            <div class="btn-group">
+                <a href="#projects" class="btn-primary glow-effect">
+                    <i class="fa-solid fa-code"></i> View Projects
+                </a>
+                <a href="https://github.com" target="_blank" rel="noopener" class="btn-outline">
+                    <i class="fa-brands fa-github"></i> GitHub Profile
+                </a>
+            </div>
+
+            <!-- Terminal Component -->
+            <div class="terminal-widget glass-panel">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <span class="terminal-title">gyanam@dev-environment:~</span>
+                </div>
+                <div class="terminal-body">
+                    <p><span class="terminal-prompt">$</span> g++ -std=c++20 main.cpp -lGL -lglfw -lGLEW -o renderer</p>
+                    <p><span class="terminal-prompt">$</span> ./renderer --enable-raytracing --debug-hooks</p>
+                    <p class="terminal-success">[INFO] OpenGL 4.6 Core Context initialized successfully.</p>
+                    <p class="terminal-success">[INFO] ImGui 1.89 framework bound to GLFW window. Ready!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="section-header">
+                <h2 class="section-title"><span class="logo-tag">01.</span> About Me</h2>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>
+                        Hello! I'm <span class="highlight">Gyanam Modi</span>, a software engineer deeply passionate about low-level programming, graphics architectures, and systems security. I thrive on understanding how software interacts with hardware at the lowest levels.
+                    </p>
+                    <p>
+                        My core journey revolves around modern <span class="mono">C++ (C++17/20)</span>, crafting real-time graphics applications with OpenGL, GLFW, GLEW, and ImGui. I build custom shader pipelines, interactive UI debug overlays, and modular engine architectures.
+                    </p>
+                    <p>
+                        Additionally, I have a strong fascination with Reverse Engineering & Security Analysis Tools. Whether it's dissecting binaries, analyzing memory structures, or configuring cross-platform MSYS2 toolchains, I love tackling complex backend and systems-level challenges.
+                    </p>
+                    <div class="pills-container">
+                        <span class="pill pill-teal">⚡ Real-Time Shaders & Rendering</span>
+                        <span class="pill pill-purple">🛡️ Binary Analysis & Disassembly</span>
+                        <span class="pill pill-blue">⚙️ Native C++ Development</span>
+                    </div>
+                </div>
+
+                <div class="profile-card glass-panel">
+                    <div class="profile-avatar">
+                        <div class="profile-avatar-inner">
+                            <i class="fa-solid fa-terminal"></i>
+                        </div>
+                    </div>
+                    <h3>Gyanam Modi</h3>
+                    <p class="mono" style="color: var(--primary-color); font-size: 0.8rem; margin-top: 0.25rem;">Systems & Graphics Dev</p>
+                    <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1rem 0;">
+                    <p class="mono" style="font-size: 0.75rem; color: var(--text-sub);">📍 Location: Global / Remote</p>
+                    <p class="mono" style="font-size: 0.75rem; color: var(--text-sub); margin-top: 0.25rem;">💻 Main Stack: C++, OpenGL, CMake</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="section">
+            <div class="section-header">
+                <h2 class="section-title"><span class="logo-tag">02.</span> Skills & Expertise</h2>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="skills-grid">
+                <div class="skill-card glass-panel">
+                    <div class="skill-header">
+                        <div class="skill-icon"><i class="fa-solid fa-code"></i></div>
+                        <h3 class="skill-title">Modern C++</h3>
+                    </div>
+                    <p class="skill-desc">RAII, Smart Pointers, STL algorithms, Templates, Multithreading, C++17/C++20 standards, Memory Optimization.</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 92%;"></div></div>
+                </div>
+
+                <div class="skill-card glass-panel">
+                    <div class="skill-header">
+                        <div class="skill-icon" style="color: var(--accent-color); background: rgba(56, 189, 248, 0.1);"><i class="fa-solid fa-cubes"></i></div>
+                        <h3 class="skill-title">OpenGL & GLFW</h3>
+                    </div>
+                    <p class="skill-desc">Core Profile Rendering, Shaders (GLSL), Framebuffers, Textures, Lighting Models, Matrix Transformations.</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 88%; background: var(--accent-color);"></div></div>
+                </div>
+
+                <div class="skill-card glass-panel">
+                    <div class="skill-header">
+                        <div class="skill-icon" style="color: var(--purple-color); background: rgba(168, 85, 247, 0.1);"><i class="fa-solid fa-window-restore"></i></div>
+                        <h3 class="skill-title">ImGui Integration</h3>
+                    </div>
+                    <p class="skill-desc">Dear ImGui overlay interfaces, real-time telemetry dashboards, custom game engines & graphics tool GUIs.</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 85%; background: var(--purple-color);"></div></div>
+                </div>
+
+                <div class="skill-card glass-panel">
+                    <div class="skill-header">
+                        <div class="skill-icon" style="color: var(--emerald-color); background: rgba(16, 185, 129, 0.1);"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3 class="skill-title">Reverse Engineering</h3>
+                    </div>
+                    <p class="skill-desc">GDB, x64dbg, Ghidra disassembly, memory injection techniques, static & dynamic analysis, PE headers.</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 80%; background: var(--emerald-color);"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="section">
+            <div class="projects-header-wrapper">
+                <div>
+                    <h2 class="section-title"><span class="logo-tag">03.</span> Projects Showcase</h2>
+                </div>
+                <div class="project-filters">
+                    <button class="filter-btn active">All</button>
+                    <button class="filter-btn">Graphics</button>
+                    <button class="filter-btn">Reverse Eng</button>
+                    <button class="filter-btn">C++ / Tools</button>
+                </div>
+            </div>
+
+            <div class="projects-grid">
+                <!-- Project Card 1 -->
+                <div class="project-card glass-panel">
+                    <div>
+                        <div class="project-top">
+                            <span class="project-badge">Graphics / Engine</span>
+                            <div class="project-links">
+                                <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
+                                <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </div>
+                        </div>
+                        <h3 class="project-title">Vortex Renderer 3D</h3>
+                        <p class="project-desc">A real-time OpenGL 4.6 rendering engine implemented in Modern C++20 with deferred shading and PBR materials.</p>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag">C++20</span>
+                        <span class="tag">OpenGL 4.6</span>
+                        <span class="tag">GLSL</span>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="project-card glass-panel">
+                    <div>
+                        <div class="project-top">
+                            <span class="project-badge" style="color: var(--purple-color); background: rgba(168, 85, 247, 0.1);">GUI / Diagnostics</span>
+                            <div class="project-links">
+                                <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
+                                <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </div>
+                        </div>
+                        <h3 class="project-title">ImGui Runtime Inspector</h3>
+                        <p class="project-desc">Lightweight inspection overlay built with Dear ImGui for live memory, FPS counter, draw call monitoring.</p>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag">C++</span>
+                        <span class="tag">Dear ImGui</span>
+                        <span class="tag">GLEW</span>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div class="project-card glass-panel">
+                    <div>
+                        <div class="project-top">
+                            <span class="project-badge" style="color: var(--emerald-color); background: rgba(16, 185, 129, 0.1);">Reverse Eng</span>
+                            <div class="project-links">
+                                <a href="https://github.com" target="_blank"><i class="fa-brands fa-github"></i></a>
+                                <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            </div>
+                        </div>
+                        <h3 class="project-title">Aegis Memory Hook Library</h3>
+                        <p class="project-desc">Windows & MinGW library for function hooking, pattern scanning, and PE header parsing designed for security testing.</p>
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag">WinAPI</span>
+                        <span class="tag">MSYS2</span>
+                        <span class="tag">Assembly</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section">
+            <div class="contact-container">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 class="section-title"><span class="logo-tag">04.</span> Get In Touch</h2>
+                    <p style="color: var(--text-sub); margin-top: 0.5rem;">Have a project or opportunity in mind? Feel free to reach out.</p>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-info-card glass-panel">
+                        <a href="mailto:gyanammodi@example.com" class="contact-item">
+                            <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+                            <div>
+                                <div class="mono" style="font-size: 0.7rem; color: var(--text-muted);">Email</div>
+                                <div>gyanammodi@example.com</div>
+                            </div>
+                        </a>
+                        <a href="https://github.com" target="_blank" class="contact-item">
+                            <div class="contact-icon" style="color: var(--text-light); background: rgba(255, 255, 255, 0.05);"><i class="fa-brands fa-github"></i></div>
+                            <div>
+                                <div class="mono" style="font-size: 0.7rem; color: var(--text-muted);">GitHub</div>
+                                <div>github.com/gyanammodi</div>
+                            </div>
+                        </a>
+                        <a href="https://linkedin.com" target="_blank" class="contact-item">
+                            <div class="contact-icon" style="color: var(--accent-color); background: rgba(56, 189, 248, 0.1);"><i class="fa-brands fa-linkedin-in"></i></div>
+                            <div>
+                                <div class="mono" style="font-size: 0.7rem; color: var(--text-muted);">LinkedIn</div>
+                                <div>linkedin.com/in/gyanammodi</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <form class="contact-form glass-panel" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+                        <div class="form-group">
+                            <label for="name">NAME</label>
+                            <input type="text" id="name" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">EMAIL</label>
+                            <input type="email" id="email" class="form-control" placeholder="john@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">MESSAGE</label>
+                            <textarea id="message" rows="4" class="form-control" placeholder="Hello Gyanam..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary glow-effect" style="border: none; cursor: pointer; justify-content: center;">
+                            <i class="fa-solid fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <p>Designed & Built by Gyanam Modi</p>
+            <p style="color: var(--text-muted);">Built with HTML5 & External CSS</p>
+        </div>
+    </footer>
+
+</body>
+</html>

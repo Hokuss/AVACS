@@ -1,5 +1,10 @@
-website \home {
-    source = "asset/app.html";
+website \alt {
+    source = "asset/alt.html";
     tree = load(source);
     return tree;
+}
+
+style \style {
+    s = load("asset/style.css");
+    return s;
 }

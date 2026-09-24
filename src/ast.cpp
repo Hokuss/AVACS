@@ -40,6 +40,7 @@ inline const char* grammar_name(grammar g) {
         case grammar::UPDATE:            return "UPDATE";
         case grammar::RETURN:            return "RETURN";
         case grammar::INCLUDE:           return "INCLUDE";
+        case grammar::STYLE:             return "STYLE";
         case grammar::WEBSITE_BLOCK:     return "WEBSITE_BLOCK";
         case grammar::DATA_BLOCK:        return "DATA_BLOCK";
         case grammar::LOGIC_BLOCK:       return "LOGIC_BLOCK";
@@ -49,6 +50,7 @@ inline const char* grammar_name(grammar g) {
         case grammar::UPDATE_BLOCK:      return "UPDATE_BLOCK";
         case grammar::ASSERT_BLOCK:      return "ASSERT_BLOCK";
         case grammar::RETURN_BLOCK:      return "RETURN_BLOCK";
+        case grammar::STYLE_BLOCK:       return "STYLE BLOCK";
         default:                         return "UNKNOWN";
     }
 }
@@ -103,6 +105,7 @@ token ast::next_token(){
 
         if (literal == "website") return {grammar::WEB, literal.size(), literal};
         if (literal == "data")    return {grammar::DATA, literal.size(), literal};
+        if (literal == "style") return {grammar::STYLE, literal.size(), literal};
         if (literal == "logic")    return {grammar::LOGIC, literal.size(), literal};
         if (literal == "load") return {grammar::LOAD, literal.size(), literal};
         if (literal == "update") return {grammar::UPDATE, literal.size(), literal};
@@ -468,6 +471,65 @@ std::shared_ptr<green_node> ast::data_block(){
     return data;
 }
 
+std::shared_ptr<green_node> ast::style_block(){
+    std::shared_ptr<green_node> style = std::make_shared<green_node>();
+    style->syntax = grammar::STYLE_BLOCK;
+    style->size = 0;
+
+    auto add_child = [&](std::shared_ptr<green_node> child_node) {
+        if (child_node) {
+            style->child.push_back(child_node);
+            style->size += child_node->size;
+        }
+    };
+
+    auto expect_and_add = [&](grammar expected, const std::string& err_msg = "") -> bool {
+        if (peek().type != expected) {
+            if (!err_msg.empty()) {
+                std::cerr << err_msg << std::endl;
+            } else {
+                std::cerr << "Expected - " << grammar_name(expected)
+                          << " Found - " << grammar_name(peek().type) << std::endl;
+            }
+            return false;
+        }
+        add_child(next_leaf());
+        return true;
+    };
+
+    //Consume style token
+    add_child(next_leaf());
+    add_child(trivia_block());
+
+    expect_and_add(grammar::PATH,"Table not detected");
+    add_child(trivia_block());
+
+    expect_and_add(grammar::OPEN_BRACE);
+    add_child(trivia_block());
+
+    while (peek().type != grammar::CLOSE_BRACE && peek().type != grammar::EF) {
+        add_child(trivia_block());
+
+        grammar current = peek().type;
+        if (current == grammar::CLOSE_BRACE || current == grammar::EF) {
+            break;
+        }
+
+        if (current == grammar::IDENTIFIER) {
+            add_child(assignment_block());
+        } else if (current==grammar::RETURN) {
+            add_child(return_block());
+        } else {
+            std::cerr << "Unexpected token in web block body: " << grammar_name(current) << std::endl;
+            add_child(next_leaf()); // Advance token to prevent infinite loops
+        }
+    }
+
+    expect_and_add(grammar::CLOSE_BRACE, "End of the block not found");
+
+    return style;
+}
+
 std::shared_ptr<green_node> ast::include_block(){
     std::shared_ptr<green_node> include = std::make_shared<green_node> ();
     include->syntax = grammar::INCLUDE_BLOCK;
@@ -529,6 +591,10 @@ void ast::parser() {
 
             case grammar::DATA:
                 root_green->child.push_back(data_block());
+                break;
+
+            case grammar::STYLE:
+                root_green->child.push_back(style_block());
                 break;
 
             // case grammar::LOGIC:
