@@ -180,6 +180,7 @@ void request::parse_request(){
 }
 
 void request::vm_loop(){
+    // std::cout<<path<<std::endl;
 
     auto helper = [](std::string_view a){
         if(a=="LOAD") return op_code::LOAD;
@@ -207,8 +208,10 @@ void request::vm_loop(){
             default:            return "ER";
         }
     };
+    pc = 0; i = 0; j= 0; k = 0;
+    current = op_code::ER;
     while(true && i<content.size()){
-        // std::cout<<i<<" "<<content[i]<<std::endl; 
+        // std::cout<<"apple\n";
         if(current==op_code::ER && content[i]==' '){
             std::string_view temp = std::string_view(content).substr(j, i-j);
             current = helper(temp);
@@ -241,6 +244,7 @@ void request::vm_loop(){
             }
             j=i+1;
             if(content[i]=='\n') {
+                // std::cout<<reverse_helper(current)<<std::endl;
                 // std::cout<<reverse_helper(current)<<std::endl;
                 execute(); //execution code
                 if(status_code!=500) return;
