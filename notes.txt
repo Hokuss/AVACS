@@ -4,6 +4,7 @@ SO what i need is the explaination of the each type;
 2> everything under the hood with the uint8_t. 
 3> then we can hanldle the things using the add, remove isntruction
 4> standardize the tasks first. 
+5> DBMS connection set up. 
 
 Rules->
 Recursive calls to resolve everything. to maintain the readability.
@@ -12,15 +13,22 @@ Register logic.
 
 Website -> returns html
 Style -> CSS. internal stitched it inside the html block automatically (automatic maybe later)
+icon -> can it be merged?
 Update -> updates the data
-Upload -> Upload the data
-Download -> returns the data
+Load -> Downloads the data
 
-
+Reserved Key Words
+1> Load - to load the files from the disk
+2> Request - to load the body/headers from the http request (request()).
+3> External - for loading the connection. DBMS connection for now. 
 
 Steps for each process
+1> Load
 Load File -> place the source in one register if not already load the file in the output register
 The plus, multiplactor operator for string. 
+
+2> Data
+I/O -> from the http request handler. 
 
 Future Aspirations ->
 1> Do the decode and running parallely
